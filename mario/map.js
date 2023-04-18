@@ -120,9 +120,7 @@ class map extends Phaser.Scene {
             
             player.anims.play('turn'); //animation fait face caméra
         }
-        if (cursors.up.isDown){
-            player.setVelocityY(-150)
-        }
+        
     
         
         }
