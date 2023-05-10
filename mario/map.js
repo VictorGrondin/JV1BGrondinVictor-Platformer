@@ -1,7 +1,7 @@
 
 
 
-
+var fireballgroup;
 var cursors;
 var player;
 var gameOver;
@@ -18,9 +18,10 @@ class map extends Phaser.Scene {
 
     preload() {
         this.load.spritesheet('jump', 'assets/jump_ninja.png',
-        { frameWidth: 64, frameHeight: 80 });
+            { frameWidth: 64, frameHeight: 80 });
         this.load.spritesheet('perso', 'assets/personinja.png',
             { frameWidth: 68, frameHeight: 80 });
+            this.load.image('fireball', 'assets/fireball.png');
         this.load.image('tilesetPlatformer', 'assets/tilesetPlatformer.png');
         this.load.tilemapTiledJSON("carte", "assets/marioplat.json");
 
@@ -60,9 +61,10 @@ class map extends Phaser.Scene {
         // ancrage de la caméra sur le joueur
         this.cameras.main.startFollow(player);
 
-
-
+        this.fireballgroup = this.physics.add.group()
         
+      
+
 
         this.anims.create({
             key: 'left',
@@ -72,7 +74,7 @@ class map extends Phaser.Scene {
         });
         this.anims.create({
             key: 'turn',
-            frames: [{key: 'perso', frame : 3}],
+            frames: [{ key: 'perso', frame: 3 }],
             frameRate: 20
         });
         this.anims.create({
@@ -80,22 +82,22 @@ class map extends Phaser.Scene {
             frames: this.anims.generateFrameNumbers('perso', { start: 4, end: 6 }),
             frameRate: 10,
             repeat: -1
-        
+
         });
 
 
-        
+
         this.anims.create({
             key: 'jump_ninja',
             frames: this.anims.generateFrameNumbers('jump', { start: 0, end: 3 }),
             frameRate: 7,
             repeat: 0
-            
+
         });
 
         cursors = this.input.keyboard.createCursorKeys();
         this.input.keyboard.on('keydown-G', function (event) {
-            if(gravityDown) {
+            if (gravityDown) {
                 gravityDown = false;
                 player.setFlipX(true);
                 player.setAngle(180);
@@ -104,22 +106,29 @@ class map extends Phaser.Scene {
                 gravityDown = true;
                 player.setFlipX(false);
                 player.setAngle(0);
-                this.physics.world.gravity.y = 800; 
+                this.physics.world.gravity.y = 800;
             }
 
-            
 
-        },this);    
+
+        }, this);
 
         this.input.keyboard.on('keydown-F', function (event) {
-            
+
             player.anims.play("jump_ninja")
-           
-            
-        },this);player.anims.play('turn')
+            if (cursors.right.isDown) {
+            setTimeout(() => {
+                player.anims.play('right', true); //et animation => gauche
+            }, 500);}
+            if (cursors.left.isDown) {
+                setTimeout(() => {
+                    player.anims.play('left', true); //et animation => gauche
+                }, 500);}
+        }, this); player.anims.play('turn')
+
     }
-        
- 
+
+
 
 
     update() {
@@ -127,29 +136,33 @@ class map extends Phaser.Scene {
 
         if (cursors.left.isDown) { //si la touche gauche est appuyée
             player.setVelocityX(-600); //alors vitesse négative en X 
-            player.anims.play('left', true); //et animation => gauche
-
+            if (player.anims.currentAnim.key != 'jump_ninja') {
+                player.anims.play('left', true); //et animation => gauche
+                
+            }
         }
         else if (cursors.right.isDown) { //sinon si la touche droite est appuyée
             player.setVelocityX(600); //alors vitesse positive en X
-            player.anims.play('right', true); //et animation => droite
+            if (player.anims.currentAnim.key != 'jump_ninja') {
+                player.anims.play('right', true); //et animation => droite
 
+                
+            }
 
 
         }
-        
+
         else { // sinon
             player.setVelocityX(0); //vitesse nulle
-            if (  player.anims.currentAnim.key != 'jump_ninja'){
-            player.anims.play('turn');} //animation fait face caméra
+            if (player.anims.currentAnim.key != 'jump_ninja') {
+                player.anims.play('turn');
+            } //animation fait face caméra
 
-            
+
         }
+
+
        
-       
-    
-        
-        }
     }
+}
 
-    
