@@ -1,6 +1,6 @@
-
-
-
+var nombrefireball=0;
+var lastFired = 0;
+var toucheE;
 var fireballgroup;
 var cursors;
 var player;
@@ -21,7 +21,8 @@ class map extends Phaser.Scene {
             { frameWidth: 64, frameHeight: 80 });
         this.load.spritesheet('perso', 'assets/personinja.png',
             { frameWidth: 68, frameHeight: 80 });
-            this.load.image('fireball', 'assets/fireball.png');
+        this.load.spritesheet('fireball', 'assets/fireball.png',
+            { frameWidth: 32, frameHeight: 32});
         this.load.image('tilesetPlatformer', 'assets/tilesetPlatformer.png');
         this.load.tilemapTiledJSON("carte", "assets/marioplat.json");
 
@@ -62,8 +63,8 @@ class map extends Phaser.Scene {
         this.cameras.main.startFollow(player);
 
         this.fireballgroup = this.physics.add.group()
-        
-      
+     
+        toucheE = this.input.keyboard.addKey("E");
 
 
         this.anims.create({
@@ -85,7 +86,13 @@ class map extends Phaser.Scene {
 
         });
 
+        this.anims.create({
+            key: 'fireball',
+            frames: this.anims.generateFrameNumbers('fireballgroup', { start: 0, end: 3 }),
+            frameRate: 7,
+            repeat: 0
 
+        });
 
         this.anims.create({
             key: 'jump_ninja',
@@ -159,10 +166,25 @@ class map extends Phaser.Scene {
             } //animation fait face caméra
 
 
-        }
+        };
+        //le joueur tire des boules de feu dans toutes les directions 
+        var time = this.time.now;
 
+        if (toucheE.isDown && time > lastFired && (cursors.left.isDown || cursors.right.isDown )) {
 
-       
-    }
+            
+            if (cursors.left.isDown) {
+                this.fireballgroup.create(player.x, player.y, "fireball").body.velocity.x = -500;
+                this.fireballgroup.list[nombrefireball].body.allowGravity = false
+            nombrefireball+=1
+//
+            } else if (cursors.right.isDown) {
+                this.fireballgroup.create(player.x, player.y, "fireball").body.velocity.x = 500;
+                this.fireballgroup.list[nombrefireball].body.allowGravity = false
+            nombrefireball+=1
+          //
+
+            }
+       }
 }
-
+}
