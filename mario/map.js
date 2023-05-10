@@ -103,6 +103,14 @@ class map extends Phaser.Scene {
 
         });
 
+        this.anims.create({
+            key: 'transition',
+            frames: this.anims.generateFrameNumbers('jump', { start: 3, end: 3 }),
+            frameRate: 7,
+            repeat: 0
+
+        });
+
         cursors = this.input.keyboard.createCursorKeys();
         this.input.keyboard.on('keydown-G', function (event) {
             if (gravityDown) {
@@ -150,10 +158,12 @@ class map extends Phaser.Scene {
 
     update() {
         if (gameOver) { return; }
-
+if(!player.body.blocked.down && !player.body.blocked.top ){
+    player.anims.play('transition')
+}
         if (cursors.left.isDown) { //si la touche gauche est appuyée
             player.setVelocityX(-600); //alors vitesse négative en X 
-            if (player.anims.currentAnim.key != 'jump_ninja') {
+            if (player.anims.currentAnim.key != 'jump_ninja'&& (player.body.blocked.down || player.body.blocked.top)) {
                 player.anims.play('left', true); //et animation => gauche
 
             }
@@ -180,7 +190,7 @@ class map extends Phaser.Scene {
         //le joueur tire des boules de feu dans toutes les directions 
         var time = this.time.now;
 
-        if (toucheF.isDown && canshoot == true && (cursors.left.isDown || cursors.right.isDown)) {
+        if (toucheF.isDown && canshoot == true ) {
 
 
             if (cursors.left.isDown) {
@@ -193,12 +203,16 @@ class map extends Phaser.Scene {
 
                 //
 
-            } this.fireballgroup.getChildren()[nombrefireball].body.allowGravity = false
+            } else{this.fireballgroup.create(player.x+10, player.y, "fireball").body.velocity.x = 1000;
+
+
+            }
+                this.fireballgroup.getChildren()[nombrefireball].body.allowGravity = false
             this.fireballgroup.getChildren()[nombrefireball].anims.play('fireball')
             nombrefireball += 1
             canshoot = false
             this.time.addEvent({
-                delay: 1000, callback: () => {
+                delay: 700, callback: () => {
                     canshoot = true
 
                 },
