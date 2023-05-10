@@ -63,7 +63,7 @@ class map extends Phaser.Scene {
         this.cameras.main.startFollow(player);
 
         this.fireballgroup = this.physics.add.group()
-     
+        this.fireballgroup.setGravity(0)
         toucheE = this.input.keyboard.addKey("E");
 
 
@@ -175,13 +175,12 @@ class map extends Phaser.Scene {
             
             if (cursors.left.isDown) {
                 this.fireballgroup.create(player.x, player.y, "fireball").body.velocity.x = -500;
-                this.fireballgroup.list[nombrefireball].body.allowGravity = false
-            nombrefireball+=1
+                
+            
 //
             } else if (cursors.right.isDown) {
                 this.fireballgroup.create(player.x, player.y, "fireball").body.velocity.x = 500;
-                this.fireballgroup.list[nombrefireball].body.allowGravity = false
-            nombrefireball+=1
+                
           //
 
             }
