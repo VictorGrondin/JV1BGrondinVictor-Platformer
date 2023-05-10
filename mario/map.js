@@ -1,6 +1,7 @@
-var nombrefireball=0;
-var lastFired = 0;
+var nombrefireball = 0;
+var canshoot = true
 var toucheE;
+var  toucheF;
 var fireballgroup;
 var cursors;
 var player;
@@ -22,7 +23,7 @@ class map extends Phaser.Scene {
         this.load.spritesheet('perso', 'assets/personinja.png',
             { frameWidth: 68, frameHeight: 80 });
         this.load.spritesheet('fireball', 'assets/fireball.png',
-            { frameWidth: 32, frameHeight: 32});
+            { frameWidth: 32, frameHeight: 32 });
         this.load.image('tilesetPlatformer', 'assets/tilesetPlatformer.png');
         this.load.tilemapTiledJSON("carte", "assets/marioplat.json");
 
@@ -63,8 +64,8 @@ class map extends Phaser.Scene {
         this.cameras.main.startFollow(player);
 
         this.fireballgroup = this.physics.add.group()
-        this.fireballgroup.setGravity(0)
-        toucheE = this.input.keyboard.addKey("E");
+
+        toucheF = this.input.keyboard.addKey("F");
 
 
         this.anims.create({
@@ -88,9 +89,9 @@ class map extends Phaser.Scene {
 
         this.anims.create({
             key: 'fireball',
-            frames: this.anims.generateFrameNumbers('fireballgroup', { start: 0, end: 3 }),
+            frames: this.anims.generateFrameNumbers('fireball', { start: 0, end: 3 }),
             frameRate: 7,
-            repeat: 0
+            repeat: -1
 
         });
 
@@ -124,13 +125,22 @@ class map extends Phaser.Scene {
 
             player.anims.play("jump_ninja")
             if (cursors.right.isDown) {
-            setTimeout(() => {
-                player.anims.play('right', true); //et animation => gauche
-            }, 500);}
-            if (cursors.left.isDown) {
+                setTimeout(() => {
+                    player.anims.play('right', true); //et animation => gauche
+                }, 500);
+            }
+            else if (cursors.left.isDown) {
                 setTimeout(() => {
                     player.anims.play('left', true); //et animation => gauche
-                }, 500);}
+                }, 500);
+            }
+            else {
+                console.log("test")
+                setTimeout(() => {
+                    player.anims.play('turn', true); //et animation => gauche
+                }, 500);
+            }
+
         }, this); player.anims.play('turn')
 
     }
@@ -145,7 +155,7 @@ class map extends Phaser.Scene {
             player.setVelocityX(-600); //alors vitesse négative en X 
             if (player.anims.currentAnim.key != 'jump_ninja') {
                 player.anims.play('left', true); //et animation => gauche
-                
+
             }
         }
         else if (cursors.right.isDown) { //sinon si la touche droite est appuyée
@@ -153,7 +163,7 @@ class map extends Phaser.Scene {
             if (player.anims.currentAnim.key != 'jump_ninja') {
                 player.anims.play('right', true); //et animation => droite
 
-                
+
             }
 
 
@@ -170,20 +180,33 @@ class map extends Phaser.Scene {
         //le joueur tire des boules de feu dans toutes les directions 
         var time = this.time.now;
 
-        if (toucheE.isDown && time > lastFired && (cursors.left.isDown || cursors.right.isDown )) {
+        if (toucheF.isDown && canshoot == true && (cursors.left.isDown || cursors.right.isDown)) {
 
-            
+
             if (cursors.left.isDown) {
-                this.fireballgroup.create(player.x, player.y, "fireball").body.velocity.x = -500;
-                
-            
-//
-            } else if (cursors.right.isDown) {
-                this.fireballgroup.create(player.x, player.y, "fireball").body.velocity.x = 500;
-                
-          //
+                this.fireballgroup.create(player.x-10, player.y, "fireball").body.velocity.x = -1000;
 
-            }
-       }
-}
+
+                //
+            } else if (cursors.right.isDown) {
+                this.fireballgroup.create(player.x+10, player.y, "fireball").body.velocity.x = 1000;
+
+                //
+
+            } this.fireballgroup.getChildren()[nombrefireball].body.allowGravity = false
+            this.fireballgroup.getChildren()[nombrefireball].anims.play('fireball')
+            nombrefireball += 1
+            canshoot = false
+            this.time.addEvent({
+                delay: 1000, callback: () => {
+                    canshoot = true
+
+                },
+            })
+        }
+
+
+    }
+
+
 }
