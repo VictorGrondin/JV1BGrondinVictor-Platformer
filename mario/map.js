@@ -23,7 +23,7 @@ class map extends Phaser.Scene {
         this.load.spritesheet('perso', 'assets/personinja.png',
             { frameWidth: 64, frameHeight: 80 });
             this.load.spritesheet('transition', 'assets/transition.png',
-            { frameWidth: 53, frameHeight: 80 });
+            { frameWidth: 48, frameHeight: 80 });
         this.load.spritesheet('fireball', 'assets/fireball.png',
             { frameWidth: 32, frameHeight: 32 });
         this.load.image('tilesetPlatformer', 'assets/tilesetPlatformer.png');
@@ -217,7 +217,8 @@ class map extends Phaser.Scene {
             else if (cursors.right.isDown) { //sinon si la touche droite est appuyée
                 player.setVelocityX(700); //alors vitesse positive en X
                 player.anims.play('transition_right')
-            }
+            };
+
             //le joueur tire des boules de feu dans toutes les directions 
             var time = this.time.now;
 
@@ -252,7 +253,7 @@ class map extends Phaser.Scene {
             }
 
 
-        }
+            }
 
 
     }
