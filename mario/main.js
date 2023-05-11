@@ -5,11 +5,12 @@ var config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 800 },
-            debug: true
+            debug: false,
+            
         }
     },
     input: { gamepad: true },
-
+    pixelArt: true,
     scene: [map]
 
 };
