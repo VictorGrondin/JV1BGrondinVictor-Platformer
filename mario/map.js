@@ -164,7 +164,7 @@ class map extends Phaser.Scene {
                 }, 500);
             }
             else {
-                
+                player.anims.play("jump_ninja_right")
                 setTimeout(() => {
                     player.anims.play('turn', true); //et animation => gauche
                 }, 500);
@@ -202,7 +202,7 @@ class map extends Phaser.Scene {
 
             else { // sinon
                 player.setVelocityX(0); //vitesse nulle
-                if (player.anims.currentAnim.key != 'jump_ninja_left' && 'jump_ninja_right') {
+                if (player.anims.currentAnim.key != 'jump_ninja_left' && player.anims.currentAnim.key !='jump_ninja_right') {
                     player.anims.play('turn');
                 } //animation fait face caméra
 
