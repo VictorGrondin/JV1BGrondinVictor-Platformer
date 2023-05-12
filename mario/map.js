@@ -129,6 +129,7 @@ class map extends Phaser.Scene {
         });
 
 
+
         cursors = this.input.keyboard.createCursorKeys();
         this.input.keyboard.on('keydown-G', function (event) {
             if (gravityDown) {
@@ -163,7 +164,7 @@ class map extends Phaser.Scene {
                 }, 500);
             }
             else {
-                console.log("test")
+                
                 setTimeout(() => {
                     player.anims.play('turn', true); //et animation => gauche
                 }, 500);
@@ -172,6 +173,9 @@ class map extends Phaser.Scene {
         }, this); player.anims.play('turn')
 
     }
+
+
+
 
 
 
@@ -194,10 +198,7 @@ class map extends Phaser.Scene {
 
 
                 }
-
-
             }
-
 
             else { // sinon
                 player.setVelocityX(0); //vitesse nulle
@@ -221,6 +222,12 @@ class map extends Phaser.Scene {
 
             //le joueur tire des boules de feu dans toutes les directions 
             var time = this.time.now;
+
+        
+    }
+
+        
+
 
             if (toucheF.isDown && canshoot == true) {
 
@@ -253,8 +260,7 @@ class map extends Phaser.Scene {
             }
 
 
-            }
-
+        }     
 
     }
-}
+    
