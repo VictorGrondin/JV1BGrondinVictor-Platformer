@@ -10,7 +10,7 @@ var config = {
         }
     },
     input: { gamepad: true },
-
+    pixelArt: true,
     scene: [map]
 
 };

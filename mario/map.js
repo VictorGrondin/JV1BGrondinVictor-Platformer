@@ -1,7 +1,8 @@
-
-
-
-
+var nombrefireball = 0;
+var canshoot = true
+var toucheE;
+var toucheF;
+var fireballgroup;
 var cursors;
 var player;
 var gameOver;
@@ -17,8 +18,14 @@ class map extends Phaser.Scene {
     }
 
     preload() {
+        this.load.spritesheet('jump', 'assets/jump_ninja.png',
+            { frameWidth: 64, frameHeight: 80 });
         this.load.spritesheet('perso', 'assets/personinja.png',
-            { frameWidth: 68, frameHeight: 80 });
+            { frameWidth: 64, frameHeight: 80 });
+            this.load.spritesheet('transition', 'assets/transition.png',
+            { frameWidth: 48, frameHeight: 80 });
+        this.load.spritesheet('fireball', 'assets/fireball.png',
+            { frameWidth: 32, frameHeight: 32 });
         this.load.image('tilesetPlatformer', 'assets/tilesetPlatformer.png');
         this.load.tilemapTiledJSON("carte", "assets/marioplat.json");
 
@@ -58,73 +65,202 @@ class map extends Phaser.Scene {
         // ancrage de la caméra sur le joueur
         this.cameras.main.startFollow(player);
 
+        this.fireballgroup = this.physics.add.group()
 
+        toucheF = this.input.keyboard.addKey("F");
 
-        
 
         this.anims.create({
             key: 'left',
-            frames: this.anims.generateFrameNumbers('perso', { start: 0, end: 2 }),
+            frames: this.anims.generateFrameNumbers('perso', { start: 0, end: 5 }),
             frameRate: 10,
             repeat: -1
         });
         this.anims.create({
             key: 'turn',
-            frames: [{key: 'perso', frame : 3}],
+            frames: [{ key: 'perso', frame: 6 }],
             frameRate: 20
         });
         this.anims.create({
             key: 'right',
-            frames: this.anims.generateFrameNumbers('perso', { start: 4, end: 6 }),
+            frames: this.anims.generateFrameNumbers('perso', { start: 7, end: 12 }),
             frameRate: 10,
             repeat: -1
+
         });
+
+        this.anims.create({
+            key: 'fireball',
+            frames: this.anims.generateFrameNumbers('fireball', { start: 0, end: 3 }),
+            frameRate: 7,
+            repeat: -1
+
+        });
+
+        this.anims.create({
+            key: 'jump_ninja_left',
+            frames: this.anims.generateFrameNumbers('jump', { start: 0, end: 3 }),
+            frameRate: 7,
+            repeat: 0
+
+        });
+        this.anims.create({
+            key: 'jump_ninja_right',
+            frames: this.anims.generateFrameNumbers('jump', { start: 4, end: 7 }),
+            frameRate: 7,
+            repeat: 0
+
+        });
+
+        this.anims.create({
+            key: 'transition_left',
+            frames: this.anims.generateFrameNumbers('transition', { start: 0, end: 0 }),
+            frameRate: 7,
+            repeat: 0
+
+        });
+
+        this.anims.create({
+            key: 'transition_right',
+            frames: this.anims.generateFrameNumbers('transition', { start: 1, end: 1 }),
+            frameRate: 7,
+            repeat: 0
+
+        });
+
+
 
         cursors = this.input.keyboard.createCursorKeys();
         this.input.keyboard.on('keydown-G', function (event) {
-            if(gravityDown) {
+            if (gravityDown) {
                 gravityDown = false;
                 player.setFlipX(true);
                 player.setAngle(180);
-                this.physics.world.gravity.y = -800;
+                this.physics.world.gravity.y = -1500;
             } else {
                 gravityDown = true;
                 player.setFlipX(false);
                 player.setAngle(0);
-                this.physics.world.gravity.y = 800; 
+                this.physics.world.gravity.y = 1500;
             }
-        },this);    
+
+
+
+        }, this);
+
+        this.input.keyboard.on('keydown-F', function (event) {
+
+
+            if (cursors.right.isDown) {
+                player.anims.play("jump_ninja_right")
+                setTimeout(() => {
+                    player.anims.play('right', true); //et animation => gauche
+                }, 500);
+            }
+            else if (cursors.left.isDown) {
+                player.anims.play("jump_ninja_left")
+                setTimeout(() => {
+                    player.anims.play('left', true); //et animation => gauche
+                }, 500);
+            }
+            else {
+                player.anims.play("jump_ninja_right")
+                setTimeout(() => {
+                    player.anims.play('turn', true); //et animation => gauche
+                }, 500);
+            }
+
+        }, this); player.anims.play('turn')
+
     }
-        
+
+
+
+
 
 
 
     update() {
         if (gameOver) { return; }
+        if (player.body.blocked.down || player.body.blocked.up) {
 
-        if (cursors.left.isDown) { //si la touche gauche est appuyée
-            player.setVelocityX(-460); //alors vitesse négative en X 
-            player.anims.play('left', true); //et animation => gauche
+            if (cursors.left.isDown) { //si la touche gauche est appuyée
+                player.setVelocityX(-700); //alors vitesse négative en X 
+                if (player.anims.currentAnim.key != 'jump_ninja_left') {
+                    player.anims.play('left', true); //et animation => gauche
 
+                }
+            }
+            else if (cursors.right.isDown) { //sinon si la touche droite est appuyée
+                player.setVelocityX(700); //alors vitesse positive en X
+                if (player.anims.currentAnim.key != 'jump_ninja_right') {
+                    player.anims.play('right', true); //et animation => droite
+
+
+                }
+            }
+
+            else { // sinon
+                player.setVelocityX(0); //vitesse nulle
+                if (player.anims.currentAnim.key != 'jump_ninja_left' && player.anims.currentAnim.key !='jump_ninja_right') {
+                    player.anims.play('turn');
+                } //animation fait face caméra
+
+
+            };
         }
-        else if (cursors.right.isDown) { //sinon si la touche droite est appuyée
-            player.setVelocityX(460); //alors vitesse positive en X
-            player.anims.play('right', true); //et animation => droite
-
-
-
-        }
-        
-        else { // sinon
-            player.setVelocityX(0); //vitesse nulle
+        else {
+            if (cursors.left.isDown) { //si la touche gauche est appuyée
+                player.setVelocityX(-700); //alors vitesse négative en X 
+                player.anims.play('transition_left')
             
-            player.anims.play('turn'); //animation fait face caméra
-        }
-        
-        }
-    
-        
+            }
+            else if (cursors.right.isDown) { //sinon si la touche droite est appuyée
+                player.setVelocityX(700); //alors vitesse positive en X
+                player.anims.play('transition_right')
+            };
+
+            //le joueur tire des boules de feu dans toutes les directions 
+            var time = this.time.now;
+
         
     }
 
+        
+
+
+            if (toucheF.isDown && canshoot == true) {
+
+
+                if (cursors.left.isDown) {
+                    this.fireballgroup.create(player.x - 10, player.y, "fireball").body.velocity.x = -1000;
+
+
+                    //
+                } else if (cursors.right.isDown) {
+                    this.fireballgroup.create(player.x + 10, player.y, "fireball").body.velocity.x = 1000;
+
+                    //
+
+                } else {
+                    this.fireballgroup.create(player.x + 10, player.y, "fireball").body.velocity.x = 1000;
+
+
+                }
+                this.fireballgroup.getChildren()[nombrefireball].body.allowGravity = false
+                this.fireballgroup.getChildren()[nombrefireball].anims.play('fireball')
+                nombrefireball += 1
+                canshoot = false
+                this.time.addEvent({
+                    delay: 700, callback: () => {
+                        canshoot = true
+
+                    },
+                })
+            }
+
+
+        }     
+
+    }
     
