@@ -1,5 +1,5 @@
 var nombrefireball = 0;
-var canshoot = true
+var canshoot = true;
 var toucheE;
 var toucheF;
 var fireballgroup;
@@ -53,9 +53,11 @@ class map extends Phaser.Scene {
         murs_niveau.setCollisionByProperty({ solide: true });
 
         player = this.physics.add.sprite(24 * 32, 29 * 32, 'perso');
+        player.setAccelerationY(0);
+        player.setAccelerationX(0);
         player.setCollideWorldBounds(false);
         this.physics.add.collider(player, murs_niveau);
-
+       
         //inversGravity = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.G);
 
         // redimentionnement du monde avec les dimensions calculées via tiled
@@ -185,14 +187,14 @@ class map extends Phaser.Scene {
         if (player.body.blocked.down || player.body.blocked.up) {
 
             if (cursors.left.isDown) { //si la touche gauche est appuyée
-                player.setVelocityX(-700); //alors vitesse négative en X 
+                player.setVelocityX(-800); //alors vitesse négative en X 
                 if (player.anims.currentAnim.key != 'jump_ninja_left') {
                     player.anims.play('left', true); //et animation => gauche
 
                 }
             }
             else if (cursors.right.isDown) { //sinon si la touche droite est appuyée
-                player.setVelocityX(700); //alors vitesse positive en X
+                player.setVelocityX(800); //alors vitesse positive en X
                 if (player.anims.currentAnim.key != 'jump_ninja_right') {
                     player.anims.play('right', true); //et animation => droite
 
@@ -211,12 +213,12 @@ class map extends Phaser.Scene {
         }
         else {
             if (cursors.left.isDown) { //si la touche gauche est appuyée
-                player.setVelocityX(-700); //alors vitesse négative en X 
+                player.setVelocityX(-800); 
                 player.anims.play('transition_left')
             
             }
             else if (cursors.right.isDown) { //sinon si la touche droite est appuyée
-                player.setVelocityX(700); //alors vitesse positive en X
+                player.setVelocityX(800); 
                 player.anims.play('transition_right')
             };
 

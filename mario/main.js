@@ -4,8 +4,9 @@ var config = {
     physics: {
         default: 'arcade',
         arcade: {
+            tileBias: 32,
             gravity: { y: 800 },
-            debug: false
+            debug: true
             
         }
     },
