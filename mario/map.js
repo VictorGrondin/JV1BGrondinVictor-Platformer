@@ -27,8 +27,9 @@ class map extends Phaser.Scene {
             { frameWidth: 48, frameHeight: 80 });
         this.load.spritesheet('fireball', 'assets/fireball.png',
             { frameWidth: 32, frameHeight: 32 });
+        this.load.spritesheet('barre_de_vie', 'assets/barre_de_vie.png');
+            { frameWidth: 56, frameHeight: 622 });
         this.load.image('tilesetPlatformer', 'assets/tilesetPlatformer.png');
-        this.load.image('barre_de_vie', 'assets/barre_de_vie.png');
         this.load.tilemapTiledJSON("carte", "assets/marioplat.json");
 
     }
@@ -80,7 +81,7 @@ class map extends Phaser.Scene {
         toucheF = this.input.keyboard.addKey("F");
 
         //la vie du perso qui s'affiche
-        this.vie = this.physics.add.sprite(622, 56, 'barre_de_vie').setScale(0.5).setScrollFactor(0);
+        this.vie = this.physics.add.sprite(365, 190, 'barre_de_vie').setScale(0.5).setScrollFactor(0);
 
         //------------------------------------------------------------------------------------------------------------------
         this.anims.create({
@@ -161,7 +162,7 @@ class map extends Phaser.Scene {
                 frameRate: 1,
                 repeat: -1
             });
-
+        
             this.anims.create({
                 key: 'vie_3',
                 frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 3 end: 3 }),
@@ -320,7 +321,7 @@ class map extends Phaser.Scene {
         if (player_health == 0) {
             this.vie.anims.play("vie_0", true); 
         }
-
+    
 
   
         //------------------------------------------------------------------------------------------------------------------
