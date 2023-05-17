@@ -31,6 +31,7 @@ class map extends Phaser.Scene {
         this.load.spritesheet('barre_de_vie', 'assets/barre_de_vie.png',
             { frameWidth: 96, frameHeight: 112 });
         this.load.image('tilesetPlatformer', 'assets/tilesetPlatformer.png');
+        this.load.image('monstre', 'assets/ennemy.png');
         this.load.tilemapTiledJSON("carte", "assets/marioplat.json");
 
     }
@@ -43,6 +44,11 @@ class map extends Phaser.Scene {
             "tilesetPlatformer"
         );
 
+        const tileset2 = carteDuNiveau.addTilesetImage(
+            "ennemy",
+            "ennemy"
+        );
+
         const fond = carteDuNiveau.createLayer(
             "fond",
             tileset
@@ -51,6 +57,12 @@ class map extends Phaser.Scene {
             "murs_niveau",
             tileset
         );
+
+        const monstre = carteDuNiveau.createLayer(
+            "monstre",
+            tileset2
+        );
+
 
         const spike = carteDuNiveau.createLayer(
             "spike",
@@ -63,11 +75,14 @@ class map extends Phaser.Scene {
         spike.setCollisionByProperty({ solide: true });
         spike.setCollisionByProperty({ degat: true });
 
+
         player = this.physics.add.sprite(24 * 32, 29 * 32, 'perso');
         player.setAccelerationY(0);
         player.setAccelerationX(0);
         player.setCollideWorldBounds(false);
+        
         this.physics.add.collider(player, murs_niveau);
+        
 
         //inversGravity = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.G);
 
@@ -85,6 +100,14 @@ class map extends Phaser.Scene {
         //la vie du perso qui s'affiche
         this.vie = this.physics.add.sprite(100, 100, 'barre_de_vie').setScrollFactor(0);
         this.vie.body.setAllowGravity(false);
+
+//------------------------------------------------------------------------------------------------------------------
+
+        this.monstre = this.physics.add.group({ immovable: true, allowGravity: false });
+        this.calque_monstre = carteDuNiveau.getObjectLayer("monstre");
+        this.calque_monstre.objects.forEach(calque_monstre => {
+            this.evil = this.monstre.create(calque_monstre.x , calque_monstre.y -16 , "monstre");
+        });
 
         //------------------------------------------------------------------------------------------------------------------
         this.anims.create({
