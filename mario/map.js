@@ -22,7 +22,7 @@ class map extends Phaser.Scene {
             { frameWidth: 64, frameHeight: 80 });
         this.load.spritesheet('perso', 'assets/personinja.png',
             { frameWidth: 64, frameHeight: 80 });
-            this.load.spritesheet('transition', 'assets/transition.png',
+        this.load.spritesheet('transition', 'assets/transition.png',
             { frameWidth: 48, frameHeight: 80 });
         this.load.spritesheet('fireball', 'assets/fireball.png',
             { frameWidth: 32, frameHeight: 32 });
@@ -48,16 +48,22 @@ class map extends Phaser.Scene {
             tileset
         );
 
+        const spike = carteDuNiveau.createLayer(
+            "spike",
+            tileset
+        );
+
 
 
         murs_niveau.setCollisionByProperty({ solide: true });
+        spike.setCollisionByProperty({ degat: true });
 
         player = this.physics.add.sprite(24 * 32, 29 * 32, 'perso');
         player.setAccelerationY(0);
         player.setAccelerationX(0);
         player.setCollideWorldBounds(false);
         this.physics.add.collider(player, murs_niveau);
-       
+
         //inversGravity = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.G);
 
         // redimentionnement du monde avec les dimensions calculées via tiled
@@ -146,8 +152,6 @@ class map extends Phaser.Scene {
                 this.physics.world.gravity.y = 1500;
             }
 
-
-
         }, this);
 
         this.input.keyboard.on('keydown-F', function (event) {
@@ -174,9 +178,24 @@ class map extends Phaser.Scene {
 
         }, this); player.anims.play('turn')
 
+
+
+
+        this.physics.add.collider(player, spike, function () {
+            if (invincible == false) {
+                player.setTint("#ff0000")
+                invincible = true
+                player_health -= 10
+                setTimeout(() => {
+                    player.clearTint()
+                    invincible = false
+                }, 1000);
+            }
+        }, null, this);
+
+
+
     }
-
-
 
 
 
@@ -204,7 +223,7 @@ class map extends Phaser.Scene {
 
             else { // sinon
                 player.setVelocityX(0); //vitesse nulle
-                if (player.anims.currentAnim.key != 'jump_ninja_left' && player.anims.currentAnim.key !='jump_ninja_right') {
+                if (player.anims.currentAnim.key != 'jump_ninja_left' && player.anims.currentAnim.key != 'jump_ninja_right') {
                     player.anims.play('turn');
                 } //animation fait face caméra
 
@@ -213,56 +232,77 @@ class map extends Phaser.Scene {
         }
         else {
             if (cursors.left.isDown) { //si la touche gauche est appuyée
-                player.setVelocityX(-800); 
+                player.setVelocityX(-800);
                 player.anims.play('transition_left')
-            
+
             }
             else if (cursors.right.isDown) { //sinon si la touche droite est appuyée
-                player.setVelocityX(800); 
+                player.setVelocityX(800);
                 player.anims.play('transition_right')
             };
 
             //le joueur tire des boules de feu dans toutes les directions 
             var time = this.time.now;
 
-        
-    }
 
-        
+        }
+            if (player_health == 60) {
+                this.vie.anims.play("vie_6", true);
+            }
+            if (player_health == 50) {
+                this.vie.anims.play("vie_5", true);
+            }
+            if (player_health == 40) {
+                this.vie.anims.play("vie_4", true);
+            }
+            if (player_health == 30) {
+                this.vie.anims.play("vie_3", true);
+            }     
+            if (player_health == 20) {
+                this.vie.anims.play("vie_2", true);
+            }
+            if (player_health == 10) {
+                this.vie.anims.play("vie_1", true);
+            }
+            if (player_health == 0) {
+                this.vie.anims.play("vie_0", true);
+                this.scene.start('Gameover')
+            }
+
+            if (gameOver) { return; }
 
 
-            if (toucheF.isDown && canshoot == true) {
+
+                    if (toucheF.isDown && canshoot == true) {
 
 
-                if (cursors.left.isDown) {
-                    this.fireballgroup.create(player.x - 10, player.y, "fireball").body.velocity.x = -1000;
+                        if (cursors.left.isDown) {
+                            this.fireballgroup.create(player.x - 10, player.y, "fireball").body.velocity.x = -1000;
 
 
-                    //
-                } else if (cursors.right.isDown) {
-                    this.fireballgroup.create(player.x + 10, player.y, "fireball").body.velocity.x = 1000;
+                            //
+                        } else if (cursors.right.isDown) {
+                            this.fireballgroup.create(player.x + 10, player.y, "fireball").body.velocity.x = 1000;
 
-                    //
+                            //
 
-                } else {
-                    this.fireballgroup.create(player.x + 10, player.y, "fireball").body.velocity.x = 1000;
+                        } else {
+                            this.fireballgroup.create(player.x + 10, player.y, "fireball").body.velocity.x = 1000;
+
+
+                        }
+                        this.fireballgroup.getChildren()[nombrefireball].body.allowGravity = false
+                        this.fireballgroup.getChildren()[nombrefireball].anims.play('fireball')
+                        nombrefireball += 1
+                        canshoot = false
+                        this.time.addEvent({
+                            delay: 700, callback: () => {
+                                canshoot = true
+
+                            },
+                        })
+                    }
 
 
                 }
-                this.fireballgroup.getChildren()[nombrefireball].body.allowGravity = false
-                this.fireballgroup.getChildren()[nombrefireball].anims.play('fireball')
-                nombrefireball += 1
-                canshoot = false
-                this.time.addEvent({
-                    delay: 700, callback: () => {
-                        canshoot = true
-
-                    },
-                })
             }
-
-
-        }     
-
-    }
-    
