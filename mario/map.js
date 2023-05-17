@@ -83,7 +83,7 @@ class map extends Phaser.Scene {
         toucheF = this.input.keyboard.addKey("F");
 
         //la vie du perso qui s'affiche
-        this.vie = this.physics.add.sprite(365, 190, 'barre_de_vie').setScrollFactor(0);
+        this.vie = this.physics.add.sprite(100, 100, 'barre_de_vie').setScrollFactor(0);
         this.vie.body.setAllowGravity(false);
 
         //------------------------------------------------------------------------------------------------------------------
@@ -325,7 +325,7 @@ class map extends Phaser.Scene {
         if (player_health == 0) {
             this.vie.anims.play("vie_0", true); 
         }
-    
+        if (gameOver) { return; }
     
   
         //------------------------------------------------------------------------------------------------------------------
