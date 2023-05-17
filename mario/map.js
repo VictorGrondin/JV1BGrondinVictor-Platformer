@@ -2,6 +2,7 @@ var nombrefireball = 0;
 var canshoot = true;
 var toucheE;
 var toucheF;
+var player_health = 60;
 var fireballgroup;
 var cursors;
 var player;
@@ -27,6 +28,7 @@ class map extends Phaser.Scene {
         this.load.spritesheet('fireball', 'assets/fireball.png',
             { frameWidth: 32, frameHeight: 32 });
         this.load.image('tilesetPlatformer', 'assets/tilesetPlatformer.png');
+        this.load.image('barre_de_vie', 'assets/barre_de_vie.png');
         this.load.tilemapTiledJSON("carte", "assets/marioplat.json");
 
     }
@@ -77,7 +79,7 @@ class map extends Phaser.Scene {
 
         toucheF = this.input.keyboard.addKey("F");
 
-
+//------------------------------------------------------------------------------------------------------------------
         this.anims.create({
             key: 'left',
             frames: this.anims.generateFrameNumbers('perso', { start: 0, end: 5 }),
@@ -136,8 +138,58 @@ class map extends Phaser.Scene {
 
         });
 
+        this.anims.create({
+         key: 'vie_6',
+        frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 6 end: 6 }),
+        frameRate: 1,
+        repeat: -1
+        });
 
 
+        this.anims.create({
+        key: 'vie_5',
+        frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 5 end: 5 }),
+        frameRate: 1,
+        repeat: -1
+        });
+
+
+        this.anims.create({
+        key: 'vie_4',
+        frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 4 end: 4 }),
+        frameRate: 1,
+        repeat: -1
+        });
+
+        this.anims.create({
+        key: 'vie_3',
+        frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 3 end: 3 }),
+        frameRate: 1,
+        repeat: -1
+        });
+
+        this.anims.create({
+        key: 'vie_2',
+        frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 2, end: 2 }),
+        frameRate: 1,
+        repeat: -1
+        });
+
+        this.anims.create({
+        key: 'vie_1',
+        frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 1, end: 1 }),
+        frameRate: 1,
+        repeat: -1
+        });
+
+        this.anims.create({
+        key: 'vie_0',
+        frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 0, end: 0 }),
+        frameRate: 1,
+        repeat: -1
+        });
+    
+//------------------------------------------------------------------------------------------------------------------
         cursors = this.input.keyboard.createCursorKeys();
         this.input.keyboard.on('keydown-G', function (event) {
             if (gravityDown) {
@@ -199,7 +251,7 @@ class map extends Phaser.Scene {
 
 
 
-
+//------------------------------------------------------------------------------------------------------------------
 
     update() {
         if (gameOver) { return; }
@@ -244,7 +296,7 @@ class map extends Phaser.Scene {
             //le joueur tire des boules de feu dans toutes les directions 
             var time = this.time.now;
 
-
+//------------------------------------------------------------------------------------------------------------------
         }
             if (player_health == 60) {
                 this.vie.anims.play("vie_6", true);
@@ -272,7 +324,7 @@ class map extends Phaser.Scene {
             if (gameOver) { return; }
 
 
-
+//------------------------------------------------------------------------------------------------------------------
                     if (toucheF.isDown && canshoot == true) {
 
 
