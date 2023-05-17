@@ -56,7 +56,7 @@ class map extends Phaser.Scene {
         );
 
 
-
+        //-------------------------------------------------------------------------------------
         murs_niveau.setCollisionByProperty({ solide: true });
         spike.setCollisionByProperty({ degat: true });
 
@@ -79,7 +79,10 @@ class map extends Phaser.Scene {
 
         toucheF = this.input.keyboard.addKey("F");
 
-//------------------------------------------------------------------------------------------------------------------
+        //la vie du perso qui s'affiche
+        this.vie = this.physics.add.sprite(622, 56, 'barre_de_vie').setScale(0.5).setScrollFactor(0);
+
+        //------------------------------------------------------------------------------------------------------------------
         this.anims.create({
             key: 'left',
             frames: this.anims.generateFrameNumbers('perso', { start: 0, end: 5 }),
@@ -137,59 +140,57 @@ class map extends Phaser.Scene {
             repeat: 0
 
         });
+        //-----------------------------------------------------------------------------------------------------------
+            this.anims.create({
+                key: 'vie_6',
+                frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 6 end: 6 }),
+                frameRate: 1,
+                repeat: -1
+            });
+            
+            this.anims.create({
+                key: 'vie_5',
+                frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 5 end: 5 }),
+                frameRate: 1,
+                repeat: -1
+            });
 
-        this.anims.create({
-         key: 'vie_6',
-        frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 6 end: 6 }),
-        frameRate: 1,
-        repeat: -1
-        });
+            this.anims.create({
+                key: 'vie_4',
+                frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 4 end: 4 }),
+                frameRate: 1,
+                repeat: -1
+            });
 
+            this.anims.create({
+                key: 'vie_3',
+                frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 3 end: 3 }),
+                frameRate: 1,
+                repeat: -1
+            });
 
-        this.anims.create({
-        key: 'vie_5',
-        frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 5 end: 5 }),
-        frameRate: 1,
-        repeat: -1
-        });
+            this.anims.create({
+                key: 'vie_2',
+                frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 2, end: 2 }),
+                frameRate: 1,
+                repeat: -1
+            });
 
+            this.anims.create({
+                key: 'vie_1',
+                frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 1, end: 1 }),
+                frameRate: 1,
+                repeat: -1
+            });
 
-        this.anims.create({
-        key: 'vie_4',
-        frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 4 end: 4 }),
-        frameRate: 1,
-        repeat: -1
-        });
+            this.anims.create({
+                key: 'vie_0',
+                frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 0, end: 0 }),
+                frameRate: 1,
+                repeat: -1
+            });
 
-        this.anims.create({
-        key: 'vie_3',
-        frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 3 end: 3 }),
-        frameRate: 1,
-        repeat: -1
-        });
-
-        this.anims.create({
-        key: 'vie_2',
-        frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 2, end: 2 }),
-        frameRate: 1,
-        repeat: -1
-        });
-
-        this.anims.create({
-        key: 'vie_1',
-        frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 1, end: 1 }),
-        frameRate: 1,
-        repeat: -1
-        });
-
-        this.anims.create({
-        key: 'vie_0',
-        frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 0, end: 0 }),
-        frameRate: 1,
-        repeat: -1
-        });
-    
-//------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------------
         cursors = this.input.keyboard.createCursorKeys();
         this.input.keyboard.on('keydown-G', function (event) {
             if (gravityDown) {
@@ -251,7 +252,7 @@ class map extends Phaser.Scene {
 
 
 
-//------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
 
     update() {
         if (gameOver) { return; }
@@ -296,65 +297,63 @@ class map extends Phaser.Scene {
             //le joueur tire des boules de feu dans toutes les directions 
             var time = this.time.now;
 
-//------------------------------------------------------------------------------------------------------------------
+            //------------------------------------------------------------------------------------------------------------------
         }
-            if (player_health == 60) {
-                this.vie.anims.play("vie_6", true);
+        if (player_health == 60) {
+            this.vie.anims.play("vie_6", true);
+        }
+        if (player_health == 50) {
+            this.vie.anims.play("vie_5", true);
+        }
+        if (player_health == 40) {
+            this.vie.anims.play("vie_4", true);
+        }
+        if (player_health == 30) {
+            this.vie.anims.play("vie_3", true);
+        }
+        if (player_health == 20) {
+            this.vie.anims.play("vie_2", true);
+        }
+        if (player_health == 10) {
+            this.vie.anims.play("vie_1", true);
+        }
+        if (player_health == 0) {
+            this.vie.anims.play("vie_0", true); 
+        }
+
+
+  
+        //------------------------------------------------------------------------------------------------------------------
+    if (toucheF.isDown && canshoot == true) {
+
+
+        if (cursors.left.isDown) {
+                this.fireballgroup.create(player.x - 10, player.y, "fireball").body.velocity.x = -1000;
+
+
+              
+            } else if (cursors.right.isDown) {
+                this.fireballgroup.create(player.x + 10, player.y, "fireball").body.velocity.x = 1000;
+
+                
+
+            } else {
+                this.fireballgroup.create(player.x + 10, player.y, "fireball").body.velocity.x = 1000;
+
+
             }
-            if (player_health == 50) {
-                this.vie.anims.play("vie_5", true);
-            }
-            if (player_health == 40) {
-                this.vie.anims.play("vie_4", true);
-            }
-            if (player_health == 30) {
-                this.vie.anims.play("vie_3", true);
-            }     
-            if (player_health == 20) {
-                this.vie.anims.play("vie_2", true);
-            }
-            if (player_health == 10) {
-                this.vie.anims.play("vie_1", true);
-            }
-            if (player_health == 0) {
-                this.vie.anims.play("vie_0", true);
-                this.scene.start('Gameover')
-            }
+            this.fireballgroup.getChildren()[nombrefireball].body.allowGravity = false
+            this.fireballgroup.getChildren()[nombrefireball].anims.play('fireball')
+            nombrefireball += 1
+            canshoot = false
+            this.time.addEvent({
+                delay: 700, callback: () => {
+                    canshoot = true
 
-            if (gameOver) { return; }
+                },
+            })
+        }
 
 
-//------------------------------------------------------------------------------------------------------------------
-                    if (toucheF.isDown && canshoot == true) {
-
-
-                        if (cursors.left.isDown) {
-                            this.fireballgroup.create(player.x - 10, player.y, "fireball").body.velocity.x = -1000;
-
-
-                            //
-                        } else if (cursors.right.isDown) {
-                            this.fireballgroup.create(player.x + 10, player.y, "fireball").body.velocity.x = 1000;
-
-                            //
-
-                        } else {
-                            this.fireballgroup.create(player.x + 10, player.y, "fireball").body.velocity.x = 1000;
-
-
-                        }
-                        this.fireballgroup.getChildren()[nombrefireball].body.allowGravity = false
-                        this.fireballgroup.getChildren()[nombrefireball].anims.play('fireball')
-                        nombrefireball += 1
-                        canshoot = false
-                        this.time.addEvent({
-                            delay: 700, callback: () => {
-                                canshoot = true
-
-                            },
-                        })
-                    }
-
-
-                }
-            }
+    }
+}
