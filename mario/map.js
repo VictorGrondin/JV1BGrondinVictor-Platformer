@@ -80,9 +80,9 @@ class map extends Phaser.Scene {
         player.setAccelerationY(0);
         player.setAccelerationX(0);
         player.setCollideWorldBounds(false);
-        
+
         this.physics.add.collider(player, murs_niveau);
-        
+
 
         //inversGravity = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.G);
 
@@ -101,13 +101,21 @@ class map extends Phaser.Scene {
         this.vie = this.physics.add.sprite(100, 100, 'barre_de_vie').setScrollFactor(0);
         this.vie.body.setAllowGravity(false);
 
-//------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------------
 
         this.monstre = this.physics.add.group({ immovable: true, allowGravity: false });
         this.calque_monstre = carteDuNiveau.getObjectLayer("monstre");
         this.calque_monstre.objects.forEach(calque_monstre => {
-            this.evil = this.monstre.create(calque_monstre.x , calque_monstre.y -16 , "monstre");
+            this.evil = this.monstre.create(calque_monstre.x, calque_monstre.y - 16, "monstre");
+
+
         });
+
+
+        this.physics.add.collider(this.monstre, player);
+        this.physics.add.collider(this.monstre, murs_niveau);
+
+
 
         //------------------------------------------------------------------------------------------------------------------
         this.anims.create({
@@ -168,54 +176,54 @@ class map extends Phaser.Scene {
 
         });
         //-----------------------------------------------------------------------------------------------------------
-            this.anims.create({
-                key: 'vie_6',
-                frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 6 ,end: 6 }),
-                frameRate: 1,
-                repeat: -1
-            });
-            
-            this.anims.create({
-                key: 'vie_5',
-                frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 5, end: 5 }),
-                frameRate: 1,
-                repeat: -1
-            });
+        this.anims.create({
+            key: 'vie_6',
+            frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 6, end: 6 }),
+            frameRate: 1,
+            repeat: -1
+        });
 
-            this.anims.create({
-                key: 'vie_4',
-                frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 4, end: 4 }),
-                frameRate: 1,
-                repeat: -1
-            });
-        
-            this.anims.create({
-                key: 'vie_3',
-                frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 3, end: 3 }),
-                frameRate: 1,
-                repeat: -1
-            });
+        this.anims.create({
+            key: 'vie_5',
+            frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 5, end: 5 }),
+            frameRate: 1,
+            repeat: -1
+        });
 
-            this.anims.create({
-                key: 'vie_2',
-                frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 2, end: 2 }),
-                frameRate: 1,
-                repeat: -1
-            });
+        this.anims.create({
+            key: 'vie_4',
+            frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 4, end: 4 }),
+            frameRate: 1,
+            repeat: -1
+        });
 
-            this.anims.create({
-                key: 'vie_1',
-                frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 1, end: 1 }),
-                frameRate: 1,
-                repeat: -1
-            });
+        this.anims.create({
+            key: 'vie_3',
+            frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 3, end: 3 }),
+            frameRate: 1,
+            repeat: -1
+        });
 
-            this.anims.create({
-                key: 'vie_0',
-                frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 0, end: 0 }),
-                frameRate: 1,
-                repeat: -1
-            });
+        this.anims.create({
+            key: 'vie_2',
+            frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 2, end: 2 }),
+            frameRate: 1,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'vie_1',
+            frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 1, end: 1 }),
+            frameRate: 1,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'vie_0',
+            frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 0, end: 0 }),
+            frameRate: 1,
+            repeat: -1
+        });
 
         //------------------------------------------------------------------------------------------------------------------
         cursors = this.input.keyboard.createCursorKeys();
@@ -326,7 +334,7 @@ class map extends Phaser.Scene {
 
             //------------------------------------------------------------------------------------------------------------------
         }
-        
+
         if (player_health == 60) {
             this.vie.anims.play("vie_6", true);
         }
@@ -346,24 +354,24 @@ class map extends Phaser.Scene {
             this.vie.anims.play("vie_1", true);
         }
         if (player_health == 0) {
-            this.vie.anims.play("vie_0", true); 
+            this.vie.anims.play("vie_0", true);
         }
         if (gameOver) { return; }
-    
-  
+
+
         //------------------------------------------------------------------------------------------------------------------
-    if (toucheF.isDown && canshoot == true) {
+        if (toucheF.isDown && canshoot == true) {
 
 
-        if (cursors.left.isDown) {
+            if (cursors.left.isDown) {
                 this.fireballgroup.create(player.x - 10, player.y, "fireball").body.velocity.x = -1000;
 
 
-              
+
             } else if (cursors.right.isDown) {
                 this.fireballgroup.create(player.x + 10, player.y, "fireball").body.velocity.x = 1000;
 
-                
+
 
             } else {
                 this.fireballgroup.create(player.x + 10, player.y, "fireball").body.velocity.x = 1000;
@@ -383,5 +391,7 @@ class map extends Phaser.Scene {
         }
 
 
+
     }
+    
 }
