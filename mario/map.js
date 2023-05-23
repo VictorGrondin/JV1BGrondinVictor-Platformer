@@ -7,6 +7,8 @@ var player_health = 60;
 var fireballgroup;
 var cursors;
 var player;
+var monstreSpeed = 200; // Vitesse de l'ennemi en pixels par seconde
+var stopTime = 3000; // Temps d'arrêt en millisecondes
 var gameOver;
 var inversGravity;
 var gravityDown = true;
@@ -80,7 +82,7 @@ class map extends Phaser.Scene {
         player.setAccelerationY(0);
         player.setAccelerationX(0);
         player.setCollideWorldBounds(false);
-
+        
         this.physics.add.collider(player, murs_niveau);
 
 
@@ -111,9 +113,13 @@ class map extends Phaser.Scene {
 
         });
 
-
+        
         this.physics.add.collider(this.monstre, player);
+     
         this.physics.add.collider(this.monstre, murs_niveau);
+       
+        
+  
 
 
 
@@ -233,11 +239,13 @@ class map extends Phaser.Scene {
                 player.setFlipX(true);
                 player.setAngle(180);
                 this.physics.world.gravity.y = -1500;
+
             } else {
                 gravityDown = true;
                 player.setFlipX(false);
                 player.setAngle(0);
                 this.physics.world.gravity.y = 1500;
+
             }
 
         }, this);
@@ -388,10 +396,10 @@ class map extends Phaser.Scene {
 
                 },
             })
+
         }
 
-
-
+} 
+       
     }
-    
-}
+      

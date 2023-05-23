@@ -432,14 +432,26 @@
                 {
                  "class":"",
                  "gid":442,
-                 "height":64,
+                 "height":66,
                  "id":29,
                  "name":"monstre",
                  "rotation":0,
                  "visible":true,
-                 "width":64,
+                 "width":66,
                  "x":2624,
-                 "y":992
+                 "y":898
+                }, 
+                {
+                 "class":"",
+                 "gid":442,
+                 "height":64,
+                 "id":49,
+                 "name":"",
+                 "rotation":0,
+                 "visible":true,
+                 "width":64,
+                 "x":2815.66666666667,
+                 "y":863.5
                 }],
          "offsetx":-19,
          "offsety":-10.1666666666666,
@@ -661,7 +673,7 @@
          "y":0
         }],
  "nextlayerid":8,
- "nextobjectid":45,
+ "nextobjectid":50,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.9.2",
