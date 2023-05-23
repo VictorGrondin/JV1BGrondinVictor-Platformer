@@ -82,7 +82,7 @@ class map extends Phaser.Scene {
         player.setAccelerationY(0);
         player.setAccelerationX(0);
         player.setCollideWorldBounds(false);
-        
+
         this.physics.add.collider(player, murs_niveau);
 
 
@@ -112,15 +112,12 @@ class map extends Phaser.Scene {
 
 
         });
+        this.monstre.setVelocityY(100);
 
-        
+
+
+
         this.physics.add.collider(this.monstre, player);
-     
-        this.physics.add.collider(this.monstre, murs_niveau);
-       
-        
-  
-
 
 
         //------------------------------------------------------------------------------------------------------------------
@@ -289,7 +286,7 @@ class map extends Phaser.Scene {
             }
         }, null, this);
 
-
+        this.physics.add.collider(this.monstre, murs_niveau, this.collision, null, this);
 
     }
 
@@ -399,7 +396,19 @@ class map extends Phaser.Scene {
 
         }
 
-} 
-       
+
+
     }
-      
+    collision(monstre, mur) {
+        console.log("ca touche", monstre.body.velocity.y)
+        // Inverser la vélocité du monstre
+        if (monstre.y > 42 * 32) {
+            console.log("ouais")
+            monstre.setVelocityY(-100);
+        }
+        else{
+            console.log("wjdene")
+            monstre.setVelocityY(100);
+        }
+    }
+}
