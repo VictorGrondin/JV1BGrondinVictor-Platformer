@@ -88,17 +88,9 @@ class map extends Phaser.Scene {
         player.setCollideWorldBounds(false);
 
         this.physics.add.collider(player, murs_niveau);
-
-
-        //inversGravity = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.G);
-
-        // redimentionnement du monde avec les dimensions calculées via tiled
-        // this.physics.world.setBounds(0, 0, 91204, 6000);
-        //  ajout du champs de la caméra de taille identique à celle du monde
-        // this.cameras.main.setBounds(0, 0, 91204, 91204);
-        // ancrage de la caméra sur le joueur
         this.cameras.main.startFollow(player);
-
+  //------------------------------------------------------------------------------------------------------------------
+                                            
         this.fireballgroup = this.physics.add.group()
 
         toucheF = this.input.keyboard.addKey("F");
@@ -108,17 +100,15 @@ class map extends Phaser.Scene {
         this.vie.body.setAllowGravity(false);
 
         //------------------------------------------------------------------------------------------------------------------
-
+                                            //création ennemi : Monstre 
+        //------------------------------------------------------------------------------------------------------------------
         this.monstre = this.physics.add.group({ immovable: true, allowGravity: false });
         this.calque_monstre = carteDuNiveau.getObjectLayer("monstre");
         this.calque_monstre.objects.forEach(calque_monstre => {
             this.evil = this.monstre.create(calque_monstre.x, calque_monstre.y - 16, "monstre");
-
-
         });
         this.monstre.setVelocityY(100);
-
-
+        
         // lorsque l'ennemi est tué, il laisse tomber un objet
         this.physics.add.overlap(this.fireballgroup, this.monstre, killchampi, null, this);
         function killchampi(player, monstre) {
@@ -135,9 +125,9 @@ class map extends Phaser.Scene {
             bdf.destroy()
             nombrefireball -= 1
         }, null, this);
-
-    
-            //------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------
+                                        //Animation personnage 
+//------------------------------------------------------------------------------------------------------------------
             this.anims.create({
                 key: 'left',
                 frames: this.anims.generateFrameNumbers('perso', { start: 0, end: 5 }),
@@ -195,7 +185,9 @@ class map extends Phaser.Scene {
                 repeat: 0
 
             });
-            //-----------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------
+                                        //Animation barre de vie 
+//------------------------------------------------------------------------------------------------------------------
             this.anims.create({
                 key: 'vie_6',
                 frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 6, end: 6 }),
@@ -245,7 +237,9 @@ class map extends Phaser.Scene {
                 repeat: -1
             });
 
-            //------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------
+                                        //configuration des touche G et F pour inverser la gravité et tirer des boules de feu 
+//------------------------------------------------------------------------------------------------------------------
             cursors = this.input.keyboard.createCursorKeys();
             this.input.keyboard.on('keydown-G', function (event) {
                 if (gravityDown) {
@@ -289,7 +283,9 @@ class map extends Phaser.Scene {
             }, this); player.anims.play('turn')
 
 
-//--------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------
+                                      
+//------------------------------------------------------------------------------------------------------------------
 
             this.physics.add.collider(player, spike, function () {
                 if (invincible == false) {
@@ -304,8 +300,7 @@ class map extends Phaser.Scene {
             }, null, this);
 
             this.physics.add.collider(this.monstre, murs_niveau, this.collision, null, this);
-
-
+//------------------------------------------------------------------------------------------------------------------
             this.physics.add.collider(player, this.monstre, function () {
                 if (invincible == false) {
                     player.setTint("#ff0000")
@@ -319,8 +314,6 @@ class map extends Phaser.Scene {
             }, null, this);
             this.physics.add.collider(player, checkpoint, function () {},null,this)
     }
-    
-            
         //------------------------------------------------------------------------------------------------------------------
 
         update() {
@@ -366,7 +359,8 @@ class map extends Phaser.Scene {
                 //le joueur tire des boules de feu dans toutes les directions 
                 var time = this.time.now;
 
-                //------------------------------------------------------------------------------------------------------------------
+                
+//------------------------------------------------------------------------------------------------------------------
             }
 
             if (player_health == 60) {
@@ -393,7 +387,7 @@ class map extends Phaser.Scene {
             if (gameOver) { return; }
 
 
-            //------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------
             if (toucheF.isDown && canshoot == true) {
 
 
@@ -424,9 +418,14 @@ class map extends Phaser.Scene {
                 })
 
             }
+            if (player_health == 0 || player_health <= 0) {
+                this.physics.pause()
+                this.scene.start('gameover');
+            }
 
-
-
+//------------------------------------------------------------------------------------------------------------------
+                                        //configuration mouvement des ennemis 
+//------------------------------------------------------------------------------------------------------------------
         }
         collision(monstre, mur) {
             console.log("ca touche", monstre.body.velocity.y)
