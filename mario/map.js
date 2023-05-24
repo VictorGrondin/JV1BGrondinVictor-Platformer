@@ -10,6 +10,12 @@ var player;
 var monstreSpeed = 200; // Vitesse de l'ennemi en pixels par seconde
 var stopTime = 3000; // Temps d'arrêt en millisecondes
 var gameOver;
+var checkpoint;
+var checkpointEtat = {
+    inactive: 0,
+    active: 1
+};
+var currentCheckpointEtat = checkpointEtat.inactive;
 var inversGravity;
 var gravityDown = true;
 gameOver = false;
@@ -32,6 +38,9 @@ class map extends Phaser.Scene {
             { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('barre_de_vie', 'assets/barre_de_vie.png',
             { frameWidth: 96, frameHeight: 112 });
+        this.load.spritesheet('checkpoint', 'assets/checkpoint.png',
+            { frameWidth: 32, frameHeight: 32 });
+
         this.load.image('tilesetPlatformer', 'assets/tilesetPlatformer.png');
         this.load.image('monstre', 'assets/ennemy.png');
         this.load.tilemapTiledJSON("carte", "assets/marioplat.json");
@@ -55,10 +64,7 @@ class map extends Phaser.Scene {
             "fond",
             tileset
         );
-        const checkpoint = carteDuNiveau.createLayer(
-            "checkpoint",
-            tileset
-        );
+
         const murs_niveau = carteDuNiveau.createLayer(
             "murs_niveau",
             tileset
@@ -89,8 +95,8 @@ class map extends Phaser.Scene {
 
         this.physics.add.collider(player, murs_niveau);
         this.cameras.main.startFollow(player);
-  //------------------------------------------------------------------------------------------------------------------
-                                            
+        //------------------------------------------------------------------------------------------------------------------
+
         this.fireballgroup = this.physics.add.group()
 
         toucheF = this.input.keyboard.addKey("F");
@@ -100,7 +106,7 @@ class map extends Phaser.Scene {
         this.vie.body.setAllowGravity(false);
 
         //------------------------------------------------------------------------------------------------------------------
-                                            //création ennemi : Monstre 
+        //création ennemi : Monstre 
         //------------------------------------------------------------------------------------------------------------------
         this.monstre = this.physics.add.group({ immovable: true, allowGravity: false });
         this.calque_monstre = carteDuNiveau.getObjectLayer("monstre");
@@ -108,7 +114,7 @@ class map extends Phaser.Scene {
             this.evil = this.monstre.create(calque_monstre.x, calque_monstre.y - 16, "monstre");
         });
         this.monstre.setVelocityY(100);
-        
+
         // lorsque l'ennemi est tué, il laisse tomber un objet
         this.physics.add.overlap(this.fireballgroup, this.monstre, killchampi, null, this);
         function killchampi(player, monstre) {
@@ -125,318 +131,377 @@ class map extends Phaser.Scene {
             bdf.destroy()
             nombrefireball -= 1
         }, null, this);
-//------------------------------------------------------------------------------------------------------------------
-                                        //Animation personnage 
-//------------------------------------------------------------------------------------------------------------------
-            this.anims.create({
-                key: 'left',
-                frames: this.anims.generateFrameNumbers('perso', { start: 0, end: 5 }),
-                frameRate: 10,
-                repeat: -1
-            });
-            this.anims.create({
-                key: 'turn',
-                frames: [{ key: 'perso', frame: 6 }],
-                frameRate: 20
-            });
-            this.anims.create({
-                key: 'right',
-                frames: this.anims.generateFrameNumbers('perso', { start: 7, end: 12 }),
-                frameRate: 10,
-                repeat: -1
-
-            });
-
-            this.anims.create({
-                key: 'fireball',
-                frames: this.anims.generateFrameNumbers('fireball', { start: 0, end: 3 }),
-                frameRate: 7,
-                repeat: -1
-
-            });
-
-            this.anims.create({
-                key: 'jump_ninja_left',
-                frames: this.anims.generateFrameNumbers('jump', { start: 0, end: 3 }),
-                frameRate: 7,
-                repeat: 0
-
-            });
-            this.anims.create({
-                key: 'jump_ninja_right',
-                frames: this.anims.generateFrameNumbers('jump', { start: 4, end: 7 }),
-                frameRate: 7,
-                repeat: 0
-
-            });
-
-            this.anims.create({
-                key: 'transition_left',
-                frames: this.anims.generateFrameNumbers('transition', { start: 0, end: 0 }),
-                frameRate: 7,
-                repeat: 0
-
-            });
-
-            this.anims.create({
-                key: 'transition_right',
-                frames: this.anims.generateFrameNumbers('transition', { start: 1, end: 1 }),
-                frameRate: 7,
-                repeat: 0
-
-            });
-//------------------------------------------------------------------------------------------------------------------
-                                        //Animation barre de vie 
-//------------------------------------------------------------------------------------------------------------------
-            this.anims.create({
-                key: 'vie_6',
-                frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 6, end: 6 }),
-                frameRate: 1,
-                repeat: -1
-            });
-
-            this.anims.create({
-                key: 'vie_5',
-                frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 5, end: 5 }),
-                frameRate: 1,
-                repeat: -1
-            });
-
-            this.anims.create({
-                key: 'vie_4',
-                frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 4, end: 4 }),
-                frameRate: 1,
-                repeat: -1
-            });
-
-            this.anims.create({
-                key: 'vie_3',
-                frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 3, end: 3 }),
-                frameRate: 1,
-                repeat: -1
-            });
-
-            this.anims.create({
-                key: 'vie_2',
-                frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 2, end: 2 }),
-                frameRate: 1,
-                repeat: -1
-            });
-
-            this.anims.create({
-                key: 'vie_1',
-                frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 1, end: 1 }),
-                frameRate: 1,
-                repeat: -1
-            });
-
-            this.anims.create({
-                key: 'vie_0',
-                frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 0, end: 0 }),
-                frameRate: 1,
-                repeat: -1
-            });
-
-//------------------------------------------------------------------------------------------------------------------
-                                        //configuration des touche G et F pour inverser la gravité et tirer des boules de feu 
-//------------------------------------------------------------------------------------------------------------------
-            cursors = this.input.keyboard.createCursorKeys();
-            this.input.keyboard.on('keydown-G', function (event) {
-                if (gravityDown) {
-                    gravityDown = false;
-                    player.setFlipX(true);
-                    player.setAngle(180);
-                    this.physics.world.gravity.y = -1500;
-
-                } else {
-                    gravityDown = true;
-                    player.setFlipX(false);
-                    player.setAngle(0);
-                    this.physics.world.gravity.y = 1500;
-
-                }
-
-            }, this);
-
-            this.input.keyboard.on('keydown-F', function (event) {
 
 
-                if (cursors.right.isDown) {
-                    player.anims.play("jump_ninja_right")
-                    setTimeout(() => {
-                        player.anims.play('right', true); //et animation => gauche
-                    }, 500);
-                }
-                else if (cursors.left.isDown) {
-                    player.anims.play("jump_ninja_left")
-                    setTimeout(() => {
-                        player.anims.play('left', true); //et animation => gauche
-                    }, 500);
-                }
-                else {
-                    player.anims.play("jump_ninja_right")
-                    setTimeout(() => {
-                        player.anims.play('turn', true); //et animation => gauche
-                    }, 500);
-                }
 
-            }, this); player.anims.play('turn')
+        this.checkpoint = this.physics.add.group({ immovable: true, allowGravity: false });
+        this.calque_checkpoint = carteDuNiveau.getObjectLayer("checkpoint");
+        this.calque_checkpoint.objects.forEach(calque_checkpoint => {
+            this.save = this.checkpoint.create(calque_checkpoint.x, calque_checkpoint.y - 16, "checkpoint");
+
+        }, null, this);
 
 
-//------------------------------------------------------------------------------------------------------------------
-                                      
-//------------------------------------------------------------------------------------------------------------------
 
-            this.physics.add.collider(player, spike, function () {
-                if (invincible == false) {
-                    player.setTint("#ff0000")
-                    invincible = true
-                    player_health -= 10
-                    setTimeout(() => {
-                        player.clearTint()
-                        invincible = false
-                    }, 1000);
-                }
-            }, null, this);
 
-            this.physics.add.collider(this.monstre, murs_niveau, this.collision, null, this);
-//------------------------------------------------------------------------------------------------------------------
-            this.physics.add.collider(player, this.monstre, function () {
-                if (invincible == false) {
-                    player.setTint("#ff0000")
-                    invincible = true
-                    player_health -= 10
-                    setTimeout(() => {
-                        player.clearTint()
-                        invincible = false
-                    }, 1000);
-                }
-            }, null, this);
-            this.physics.add.collider(player, checkpoint, function () {},null,this)
-    }
+        //------------------------------------------------------------------------------------------------------------------
+        //Animation personnage 
+        //------------------------------------------------------------------------------------------------------------------
+        this.anims.create({
+            key: 'left',
+            frames: this.anims.generateFrameNumbers('perso', { start: 0, end: 5 }),
+            frameRate: 10,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'turn',
+            frames: [{ key: 'perso', frame: 6 }],
+            frameRate: 20
+        });
+        this.anims.create({
+            key: 'right',
+            frames: this.anims.generateFrameNumbers('perso', { start: 7, end: 12 }),
+            frameRate: 10,
+            repeat: -1
+
+        });
+
+        this.anims.create({
+            key: 'fireball',
+            frames: this.anims.generateFrameNumbers('fireball', { start: 0, end: 3 }),
+            frameRate: 7,
+            repeat: -1
+
+        });
+
+        this.anims.create({
+            key: 'jump_ninja_left',
+            frames: this.anims.generateFrameNumbers('jump', { start: 0, end: 3 }),
+            frameRate: 7,
+            repeat: 0
+
+        });
+        this.anims.create({
+            key: 'jump_ninja_right',
+            frames: this.anims.generateFrameNumbers('jump', { start: 4, end: 7 }),
+            frameRate: 7,
+            repeat: 0
+
+        });
+
+        this.anims.create({
+            key: 'transition_left',
+            frames: this.anims.generateFrameNumbers('transition', { start: 0, end: 0 }),
+            frameRate: 7,
+            repeat: 0
+
+        });
+
+        this.anims.create({
+            key: 'transition_right',
+            frames: this.anims.generateFrameNumbers('transition', { start: 1, end: 1 }),
+            frameRate: 7,
+            repeat: 0
+
+        });
+        //------------------------------------------------------------------------------------------------------------------
+        //Animation barre de vie 
+        //------------------------------------------------------------------------------------------------------------------
+        this.anims.create({
+            key: 'vie_6',
+            frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 6, end: 6 }),
+            frameRate: 1,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'vie_5',
+            frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 5, end: 5 }),
+            frameRate: 1,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'vie_4',
+            frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 4, end: 4 }),
+            frameRate: 1,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'vie_3',
+            frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 3, end: 3 }),
+            frameRate: 1,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'vie_2',
+            frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 2, end: 2 }),
+            frameRate: 1,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'vie_1',
+            frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 1, end: 1 }),
+            frameRate: 1,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'vie_0',
+            frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 0, end: 0 }),
+            frameRate: 1,
+            repeat: -1
+        });
+
+        //------------------------------------------------------------------------------------------------------------------
+        //Animation checkpoint
         //------------------------------------------------------------------------------------------------------------------
 
-        update() {
-            if (gameOver) { return; }
-            if (player.body.blocked.down || player.body.blocked.up) {
+        // Créer l'animation du checkpoint inactif
+        this.anims.create({
+            key: 'checkpointInactive',
+            frames: this.anims.generateFrameNumbers('checkpoint', { start: 0, end: 0 }),
+            frameRate: 1,
+            repeat: -1
+        });
 
-                if (cursors.left.isDown) { //si la touche gauche est appuyée
-                    player.setVelocityX(-800); //alors vitesse négative en X 
-                    if (player.anims.currentAnim.key != 'jump_ninja_left') {
-                        player.anims.play('left', true); //et animation => gauche
+        // Créer l'animation du checkpoint actif
+        this.anims.create({
+            key: 'checkpointActive',
+            frames: this.anims.generateFrameNumbers('checkpoint', { start: 1, end: 1 }),
+            frameRate: 1,
+            repeat: -1
+        });
 
-                    }
-                }
-                else if (cursors.right.isDown) { //sinon si la touche droite est appuyée
-                    player.setVelocityX(800); //alors vitesse positive en X
-                    if (player.anims.currentAnim.key != 'jump_ninja_right') {
-                        player.anims.play('right', true); //et animation => droite
-
-
-                    }
-                }
-
-                else { // sinon
-                    player.setVelocityX(0); //vitesse nulle
-                    if (player.anims.currentAnim.key != 'jump_ninja_left' && player.anims.currentAnim.key != 'jump_ninja_right') {
-                        player.anims.play('turn');
-                    } //animation fait face caméra
+        //------------------------------------------------------------------------------------------------------------------
 
 
-                };
+
+        //------------------------------------------------------------------------------------------------------------------
+        //configuration des touche G et F pour inverser la gravité et tirer des boules de feu 
+        //------------------------------------------------------------------------------------------------------------------
+        cursors = this.input.keyboard.createCursorKeys();
+        this.input.keyboard.on('keydown-G', function (event) {
+            if (gravityDown) {
+                gravityDown = false;
+                player.setFlipX(true);
+                player.setAngle(180);
+                this.physics.world.gravity.y = -1500;
+
+            } else {
+                gravityDown = true;
+                player.setFlipX(false);
+                player.setAngle(0);
+                this.physics.world.gravity.y = 1500;
+
+            }
+
+        }, this);
+
+        this.input.keyboard.on('keydown-F', function (event) {
+
+
+            if (cursors.right.isDown) {
+                player.anims.play("jump_ninja_right")
+                setTimeout(() => {
+                    player.anims.play('right', true); //et animation => gauche
+                }, 500);
+            }
+            else if (cursors.left.isDown) {
+                player.anims.play("jump_ninja_left")
+                setTimeout(() => {
+                    player.anims.play('left', true); //et animation => gauche
+                }, 500);
             }
             else {
-                if (cursors.left.isDown) { //si la touche gauche est appuyée
-                    player.setVelocityX(-800);
-                    player.anims.play('transition_left')
-
-                }
-                else if (cursors.right.isDown) { //sinon si la touche droite est appuyée
-                    player.setVelocityX(800);
-                    player.anims.play('transition_right')
-                };
-
-                //le joueur tire des boules de feu dans toutes les directions 
-                var time = this.time.now;
-
-                
-//------------------------------------------------------------------------------------------------------------------
+                player.anims.play("jump_ninja_right")
+                setTimeout(() => {
+                    player.anims.play('turn', true); //et animation => gauche
+                }, 500);
             }
 
-            if (player_health == 60) {
-                this.vie.anims.play("vie_6", true);
+        }, this); player.anims.play('turn')
+
+
+        //------------------------------------------------------------------------------------------------------------------
+
+        //------------------------------------------------------------------------------------------------------------------
+
+        this.physics.add.collider(player, spike, function () {
+            if (invincible == false) {
+                player.setTint("#ff0000")
+                invincible = true
+                player_health -= 10
+                setTimeout(() => {
+                    player.clearTint()
+                    invincible = false
+                }, 1000);
             }
-            if (player_health == 50) {
-                this.vie.anims.play("vie_5", true);
+        }, null, this);
+
+        this.physics.add.collider(this.monstre, murs_niveau, this.collision, null, this);
+        //------------------------------------------------------------------------------------------------------------------
+        this.physics.add.collider(player, this.monstre, function () {
+            if (invincible == false) {
+                player.setTint("#ff0000")
+                invincible = true
+                player_health -= 10
+                setTimeout(() => {
+                    player.clearTint()
+                    invincible = false
+                }, 1000);
             }
-            if (player_health == 40) {
-                this.vie.anims.play("vie_4", true);
-            }
-            if (player_health == 30) {
-                this.vie.anims.play("vie_3", true);
-            }
-            if (player_health == 20) {
-                this.vie.anims.play("vie_2", true);
-            }
-            if (player_health == 10) {
-                this.vie.anims.play("vie_1", true);
-            }
-            if (player_health == 0) {
-                this.vie.anims.play("vie_0", true);
-            }
-            if (gameOver) { return; }
-
-
-//------------------------------------------------------------------------------------------------------------------
-            if (toucheF.isDown && canshoot == true) {
-
-
-                if (cursors.left.isDown) {
-                    this.fireballgroup.create(player.x - 10, player.y, "fireball").body.velocity.x = -1000;
-
-
-
-                } else if (cursors.right.isDown) {
-                    this.fireballgroup.create(player.x + 10, player.y, "fireball").body.velocity.x = 1000;
-
-
-
-                } else {
-                    this.fireballgroup.create(player.x + 10, player.y, "fireball").body.velocity.x = 1000;
-
-
-                }
-                this.fireballgroup.getChildren()[nombrefireball].body.allowGravity = false
-                this.fireballgroup.getChildren()[nombrefireball].anims.play('fireball')
-                nombrefireball += 1
-                canshoot = false
-                this.time.addEvent({
-                    delay: 700, callback: () => {
-                        canshoot = true
-
-                    },
-                })
-
-            }
-            if (player_health == 0 || player_health <= 0) {
-                this.physics.pause()
-                this.scene.start('gameover');
-            }
-
-//------------------------------------------------------------------------------------------------------------------
-                                        //configuration mouvement des ennemis 
-//------------------------------------------------------------------------------------------------------------------
-        }
-        collision(monstre, mur) {
-            console.log("ca touche", monstre.body.velocity.y)
-            // Inverser la vélocité du monstre
-            if (monstre.body.blocked.down) {
-                console.log("ouais")
-                monstre.setVelocityY(-100);
-            }
-            else {
-                console.log("okokene")
-                monstre.setVelocityY(100);
-            }
-        }
+        }, null, this);
     }
+    //------------------------------------------------------------------------------------------------------------------
+
+    update() {
+        if (gameOver) { return; }
+        if (player.body.blocked.down || player.body.blocked.up) {
+
+            if (cursors.left.isDown) { //si la touche gauche est appuyée
+                player.setVelocityX(-800); //alors vitesse négative en X 
+                if (player.anims.currentAnim.key != 'jump_ninja_left') {
+                    player.anims.play('left', true); //et animation => gauche
+
+                }
+            }
+            else if (cursors.right.isDown) { //sinon si la touche droite est appuyée
+                player.setVelocityX(800); //alors vitesse positive en X
+                if (player.anims.currentAnim.key != 'jump_ninja_right') {
+                    player.anims.play('right', true); //et animation => droite
+
+
+                }
+            }
+
+            else { // sinon
+                player.setVelocityX(0); //vitesse nulle
+                if (player.anims.currentAnim.key != 'jump_ninja_left' && player.anims.currentAnim.key != 'jump_ninja_right') {
+                    player.anims.play('turn');
+                } //animation fait face caméra
+
+
+            };
+        }
+        else {
+            if (cursors.left.isDown) { //si la touche gauche est appuyée
+                player.setVelocityX(-800);
+                player.anims.play('transition_left')
+
+            }
+            else if (cursors.right.isDown) { //sinon si la touche droite est appuyée
+                player.setVelocityX(800);
+                player.anims.play('transition_right')
+            };
+
+            //le joueur tire des boules de feu dans toutes les directions 
+            var time = this.time.now;
+
+
+            //------------------------------------------------------------------------------------------------------------------
+        }
+
+        if (player_health == 60) {
+            this.vie.anims.play("vie_6", true);
+        }
+        if (player_health == 50) {
+            this.vie.anims.play("vie_5", true);
+        }
+        if (player_health == 40) {
+            this.vie.anims.play("vie_4", true);
+        }
+        if (player_health == 30) {
+            this.vie.anims.play("vie_3", true);
+        }
+        if (player_health == 20) {
+            this.vie.anims.play("vie_2", true);
+        }
+        if (player_health == 10) {
+            this.vie.anims.play("vie_1", true);
+        }
+        if (player_health == 0) {
+            this.vie.anims.play("vie_0", true);
+        }
+        if (gameOver) { return; }
+
+
+        //------------------------------------------------------------------------------------------------------------------
+        if (toucheF.isDown && canshoot == true) {
+
+
+            if (cursors.left.isDown) {
+                this.fireballgroup.create(player.x - 10, player.y, "fireball").body.velocity.x = -1000;
+
+
+
+            } else if (cursors.right.isDown) {
+                this.fireballgroup.create(player.x + 10, player.y, "fireball").body.velocity.x = 1000;
+
+
+
+            } else {
+                this.fireballgroup.create(player.x + 10, player.y, "fireball").body.velocity.x = 1000;
+
+
+            }
+            this.fireballgroup.getChildren()[nombrefireball].body.allowGravity = false
+            this.fireballgroup.getChildren()[nombrefireball].anims.play('fireball')
+            nombrefireball += 1
+            canshoot = false
+            this.time.addEvent({
+                delay: 700, callback: () => {
+                    canshoot = true
+
+                },
+            })
+
+        }
+        if (player_health == 0 || player_health <= 0) {
+            this.physics.pause()
+            this.scene.start('gameover');
+        }
+
+        // Gérer les collisions entre le joueur et le checkpoint
+        this.physics.add.collider(player, this.checkpoint, this.CheckpointCollision, null, this);
+        
+
+
+    //------------------------------------------------------------------------------------------------------------------
+    //configuration mouvement des ennemis 
+    //------------------------------------------------------------------------------------------------------------------
+}
+
+CheckpointCollision(player, checkpoint) {
+    // Lorsque le joueur entre en collision avec le checkpoint
+    console.log("Checkpoint atteint !");
+    // Changer l'état du checkpoint
+    currentCheckpointEtat = checkpointEtat.active;
+    // Mettre à jour l'animation du checkpoint
+    checkpoint.anims.play('checkpointActive');
+}  
+
+
+
+
+
+collision(monstre, mur) {
+    console.log("ca touche", monstre.body.velocity.y)
+    // Inverser la vélocité du monstre
+    if (monstre.body.blocked.down) {
+        console.log("ouais")
+        monstre.setVelocityY(-100);
+    }
+    else {
+        console.log("okokene")
+        monstre.setVelocityY(100);
+    }
+}
+
+
+
+
+}
