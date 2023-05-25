@@ -40,9 +40,9 @@ class map extends Phaser.Scene {
             { frameWidth: 96, frameHeight: 112 });
         this.load.spritesheet('checkpoint', 'assets/checkpoint.png',
             { frameWidth: 32, frameHeight: 32 });
-
+            this.load.spritesheet('monstre', 'assets/ennemy.png',
+            { frameWidth: 64, frameHeight: 64 });
         this.load.image('tilesetPlatformer', 'assets/tilesetPlatformer.png');
-        this.load.image('monstre', 'assets/ennemy.png');
         this.load.tilemapTiledJSON("carte", "assets/marioplat.json");
 
     }
@@ -278,7 +278,12 @@ class map extends Phaser.Scene {
 
         //------------------------------------------------------------------------------------------------------------------
 
-
+        this.anims.create({
+            key: 'monstreAnimation',
+            frames: this.anims.generateFrameNumbers('monstre', { start: 0, end: 5 }),
+            frameRate: 5,
+            repeat: -1
+        });
 
         //------------------------------------------------------------------------------------------------------------------
         //configuration des touche G et F pour inverser la gravité et tirer des boules de feu 
@@ -492,12 +497,14 @@ collision(monstre, mur) {
     console.log("ca touche", monstre.body.velocity.y)
     // Inverser la vélocité du monstre
     if (monstre.body.blocked.down) {
-        console.log("ouais")
+        
         monstre.setVelocityY(-100);
+        monstre.anims.play('monstreAnimation')
     }
     else {
-        console.log("okokene")
+        
         monstre.setVelocityY(100);
+        monstre.anims.play('monstreAnimation')
     }
 }
 
