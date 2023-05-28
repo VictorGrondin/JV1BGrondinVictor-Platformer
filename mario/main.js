@@ -4,12 +4,14 @@ var config = {
     physics: {
         default: 'arcade',
         arcade: {
+            tileBias: 32,
             gravity: { y: 800 },
-            debug: true
+            debug: false
+            
         }
     },
     input: { gamepad: true },
-
+    pixelArt: true,
     scene: [map]
 
 };
