@@ -42,6 +42,8 @@ class map extends Phaser.Scene {
             { frameWidth: 32, frameHeight: 32 });
             this.load.spritesheet('monstre', 'assets/ennemy.png',
             { frameWidth: 64, frameHeight: 64 });
+            this.load.image('kitsoin', 'assets/kitsoin.png',
+            { frameWidth: 32, frameHeight: 32 });
         this.load.image('tilesetPlatformer', 'assets/tilesetPlatformer.png');
         this.load.tilemapTiledJSON("carte", "assets/marioplat.json");
 
@@ -141,7 +143,12 @@ class map extends Phaser.Scene {
 
         }, null, this);
 
+        this.kitsoin = this.physics.add.group({ immovable: true, allowGravity: false });
+        this.calque_kitsoin = carteDuNiveau.getObjectLayer("kitsoin");
+        this.calque_kitsoin.objects.forEach(calque_kitsoin => {
+            this.save = this.kitsoin.create(calque_kitsoin.x, calque_kitsoin.y - 16, "kitsoin");
 
+        }, null, this);
 
 
         //------------------------------------------------------------------------------------------------------------------
@@ -463,18 +470,20 @@ class map extends Phaser.Scene {
 
                 },
             })
-
+//--------------------------------------------------------------------------------------------------------------
+//si le joueur arrive a 0 coeur le jeu gameover
         }
         if (player_health == 0 || player_health <= 0) {
             this.physics.pause()
             this.scene.start('gameover');
         }
-
+//----------------------------------------------------------------------------------------------------------------------
         // Gérer les collisions entre le joueur et le checkpoint
         this.physics.add.collider(player, this.checkpoint, this.CheckpointCollision, null, this);
         
-
-
+// Gérer les collisions entre le joueur et le kit de soin
+        this.physics.world.collide(player, this.kitsoin, this.collectKit, null, this);
+    
     //------------------------------------------------------------------------------------------------------------------
     //configuration mouvement des ennemis 
     //------------------------------------------------------------------------------------------------------------------
@@ -488,8 +497,6 @@ CheckpointCollision(player, checkpoint) {
     // Mettre à jour l'animation du checkpoint
     checkpoint.anims.play('checkpointActive');
 }  
-
-
 
 
 
@@ -507,8 +514,23 @@ collision(monstre, mur) {
         monstre.anims.play('monstreAnimation')
     }
 }
+//régénération de 2 coeurs si le joueurs prend des degats
 
-
-
+collectKit(player, kitsoin) {
+    if (player_health < 60) {
+      // Augmentation des points de vie
+      player_health += 20;
+      if (player_health > 60) {
+        player_health  = 60;
+     
+  
+      // Suppression du kit de soin
+      kitsoin.destroy();
+  
+      
+      }
+    }
+  }
+  
 
 }
