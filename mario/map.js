@@ -473,15 +473,6 @@ class map extends Phaser.Scene {
         // Gérer les collisions entre le joueur et le checkpoint
         this.physics.add.collider(player, this.checkpoint, this.CheckpointCollision, null, this);
         
-<<<<<<< HEAD
-        else { // sinon
-            player.setVelocityX(0); //vitesse nulle
-            
-            player.anims.play('turn'); //animation fait face caméra
-        }
-        
-    
-=======
 
 
     //------------------------------------------------------------------------------------------------------------------
@@ -506,7 +497,6 @@ collision(monstre, mur) {
     console.log("ca touche", monstre.body.velocity.y)
     // Inverser la vélocité du monstre
     if (monstre.body.blocked.down) {
->>>>>>> 0263956686c6cd23ad48723f1bd072a76021ad8d
         
         monstre.setVelocityY(-100);
         monstre.anims.play('monstreAnimation')
