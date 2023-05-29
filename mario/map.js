@@ -90,7 +90,7 @@ class map extends Phaser.Scene {
         spike.setCollisionByProperty({ degat: true });
 
 
-        player = this.physics.add.sprite(12 * 32, 29 * 32, 'perso');
+        player = this.physics.add.sprite(35 * 32, 137 * 32, 'perso');
         player.setAccelerationY(0);
         player.setAccelerationX(0);
         player.setCollideWorldBounds(false);
