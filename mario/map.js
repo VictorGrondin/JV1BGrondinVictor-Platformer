@@ -7,6 +7,8 @@ var player_health = 60;
 var fireballgroup;
 var cursors;
 var player;
+var heroY=33 * 32
+var heroX=7 * 32
 var monstreSpeed = 200; // Vitesse de l'ennemi en pixels par seconde
 var stopTime = 3000; // Temps d'arrêt en millisecondes
 var gameOver;
@@ -90,7 +92,7 @@ class map extends Phaser.Scene {
         spike.setCollisionByProperty({ degat: true });
 
 
-        player = this.physics.add.sprite(35 * 32, 137 * 32, 'perso');
+        if (heroX&&heroY){player = this.physics.add.sprite(heroX , heroY, 'perso');}
         player.setAccelerationY(0);
         player.setAccelerationX(0);
         player.setCollideWorldBounds(false);
@@ -143,6 +145,8 @@ class map extends Phaser.Scene {
 
         }, null, this);
 
+
+    
         this.kitsoin = this.physics.add.group({ immovable: true, allowGravity: false });
         this.calque_kitsoin = carteDuNiveau.getObjectLayer("kitsoin");
         this.calque_kitsoin.objects.forEach(calque_kitsoin => {
@@ -474,15 +478,17 @@ class map extends Phaser.Scene {
 //si le joueur arrive a 0 coeur le jeu gameover
         }
         if (player_health == 0 || player_health <= 0) {
-            this.physics.pause()
-            this.scene.start('gameover');
+            player.x=heroX
+            player.y=heroY
+
+            player_health = 60
         }
 //----------------------------------------------------------------------------------------------------------------------
         // Gérer les collisions entre le joueur et le checkpoint
-        this.physics.add.collider(player, this.checkpoint, this.CheckpointCollision, null, this);
+        this.physics.add.overlap(player, this.checkpoint, this.CheckpointCollision, null, this);
         
 // Gérer les collisions entre le joueur et le kit de soin
-        this.physics.world.collide(player, this.kitsoin, this.collectKit, null, this);
+        this.physics.world.overlap(player, this.kitsoin, this.collectKit, null, this);
     
     //------------------------------------------------------------------------------------------------------------------
     //configuration mouvement des ennemis 
@@ -494,11 +500,12 @@ CheckpointCollision(player, checkpoint) {
     console.log("Checkpoint atteint !");
     // Changer l'état du checkpoint
     currentCheckpointEtat = checkpointEtat.active;
+    heroX =checkpoint.x
+    heroY= checkpoint.y
     // Mettre à jour l'animation du checkpoint
     checkpoint.anims.play('checkpointActive');
 }  
-
-
+ 
 
 collision(monstre, mur) {
     console.log("ca touche", monstre.body.velocity.y)
