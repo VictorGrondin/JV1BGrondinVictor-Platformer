@@ -3,12 +3,12 @@ var canshoot = true;
 var toucheE;
 var toucheF;
 invincible = false;
-var player_health = 60;
+var player_health = 30;
 var fireballgroup;
 var cursors;
 var player;
-var heroY=33 * 32
-var heroX=7 * 32
+var heroY = 33 * 32
+var heroX = 7 * 32
 var monstreSpeed = 200; // Vitesse de l'ennemi en pixels par seconde
 var stopTime = 3000; // Temps d'arrêt en millisecondes
 var gameOver;
@@ -27,6 +27,9 @@ class map extends Phaser.Scene {
 
     constructor() {
         super({ key: 'map' });
+        this.seconde = 0
+        this.minutes = 0
+        this.mort = 0
     }
 
     preload() {
@@ -39,12 +42,12 @@ class map extends Phaser.Scene {
         this.load.spritesheet('fireball', 'assets/fireball.png',
             { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('barre_de_vie', 'assets/barre_de_vie.png',
-            { frameWidth: 96, frameHeight: 112 });
+            { frameWidth: 144, frameHeight: 168 });
         this.load.spritesheet('checkpoint', 'assets/checkpoint.png',
             { frameWidth: 32, frameHeight: 32 });
-            this.load.spritesheet('monstre', 'assets/ennemy.png',
+        this.load.spritesheet('monstre', 'assets/ennemy.png',
             { frameWidth: 64, frameHeight: 64 });
-            this.load.image('kitsoin', 'assets/kitsoin.png',
+        this.load.image('kitsoin', 'assets/kitsoin.png',
             { frameWidth: 32, frameHeight: 32 });
         this.load.image('tilesetPlatformer', 'assets/tilesetPlatformer.png');
         this.load.tilemapTiledJSON("carte", "assets/marioplat.json");
@@ -92,7 +95,7 @@ class map extends Phaser.Scene {
         spike.setCollisionByProperty({ degat: true });
 
 
-        if (heroX&&heroY){player = this.physics.add.sprite(heroX , heroY, 'perso');}
+        if (heroX && heroY) { player = this.physics.add.sprite(heroX, heroY, 'perso'); }
         player.setAccelerationY(0);
         player.setAccelerationX(0);
         player.setCollideWorldBounds(false);
@@ -140,13 +143,15 @@ class map extends Phaser.Scene {
 
         this.checkpoint = this.physics.add.group({ immovable: true, allowGravity: false });
         this.calque_checkpoint = carteDuNiveau.getObjectLayer("checkpoint");
-        this.calque_checkpoint.objects.forEach(calque_checkpoint => {
-            this.save = this.checkpoint.create(calque_checkpoint.x, calque_checkpoint.y - 16, "checkpoint");
-
+        this.checkpoint_list = []
+        this.calque_checkpoint.objects.forEach((calque_checkpoint, i) => {
+            this.checkpoint_list[i] = this.checkpoint.create(calque_checkpoint.x, calque_checkpoint.y - 16, "checkpoint");
+            this.checkpoint_list[i].status = false
         }, null, this);
 
+        checkpoint_ref = this.checkpoint_list
 
-    
+
         this.kitsoin = this.physics.add.group({ immovable: true, allowGravity: false });
         this.calque_kitsoin = carteDuNiveau.getObjectLayer("kitsoin");
         this.calque_kitsoin.objects.forEach(calque_kitsoin => {
@@ -218,26 +223,9 @@ class map extends Phaser.Scene {
         //------------------------------------------------------------------------------------------------------------------
         //Animation barre de vie 
         //------------------------------------------------------------------------------------------------------------------
-        this.anims.create({
-            key: 'vie_6',
-            frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 6, end: 6 }),
-            frameRate: 1,
-            repeat: -1
-        });
 
-        this.anims.create({
-            key: 'vie_5',
-            frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 5, end: 5 }),
-            frameRate: 1,
-            repeat: -1
-        });
 
-        this.anims.create({
-            key: 'vie_4',
-            frames: this.anims.generateFrameNumbers('barre_de_vie', { start: 4, end: 4 }),
-            frameRate: 1,
-            repeat: -1
-        });
+
 
         this.anims.create({
             key: 'vie_3',
@@ -371,6 +359,25 @@ class map extends Phaser.Scene {
                 }, 1000);
             }
         }, null, this);
+        this.timerText = this.add.text(0, 224, 'Temps écoulé : 0', {
+            font: '24px Arial',
+            fill: '#ffffff'
+        });
+        this.timerText.setScrollFactor(0)
+
+        this.mortText = this.add.text(0, 280, 'Nombre de mort : 0', {
+            font: '24px Arial',
+            fill: '#ffffff'
+        });
+        this.mortText.setScrollFactor(0)
+
+        // Initialiser le minuteur
+        this.timer = this.time.addEvent({
+            delay: 1000,
+            callback: this.updateTimer,
+            callbackScope: this,
+            loop: true
+        });
     }
     //------------------------------------------------------------------------------------------------------------------
 
@@ -421,15 +428,8 @@ class map extends Phaser.Scene {
             //------------------------------------------------------------------------------------------------------------------
         }
 
-        if (player_health == 60) {
-            this.vie.anims.play("vie_6", true);
-        }
-        if (player_health == 50) {
-            this.vie.anims.play("vie_5", true);
-        }
-        if (player_health == 40) {
-            this.vie.anims.play("vie_4", true);
-        }
+
+
         if (player_health == 30) {
             this.vie.anims.play("vie_3", true);
         }
@@ -474,70 +474,94 @@ class map extends Phaser.Scene {
 
                 },
             })
-//--------------------------------------------------------------------------------------------------------------
-//si le joueur arrive a 0 coeur le jeu gameover
+            //--------------------------------------------------------------------------------------------------------------
+            //si le joueur arrive a 0 coeur le jeu gameover
         }
         if (player_health == 0 || player_health <= 0) {
-            player.x=heroX
-            player.y=heroY
+            player.x = heroX
+            player.y = heroY
 
-            player_health = 60
+            player_health = 30
+            this.mort+=1
         }
-//----------------------------------------------------------------------------------------------------------------------
+
+        this.mortText.setText("Nombre de morts : "+this.mort)
+        
+        //----------------------------------------------------------------------------------------------------------------------
         // Gérer les collisions entre le joueur et le checkpoint
         this.physics.add.overlap(player, this.checkpoint, this.CheckpointCollision, null, this);
-        
-// Gérer les collisions entre le joueur et le kit de soin
+
+        // Gérer les collisions entre le joueur et le kit de soin
         this.physics.world.overlap(player, this.kitsoin, this.collectKit, null, this);
-    
-    //------------------------------------------------------------------------------------------------------------------
-    //configuration mouvement des ennemis 
-    //------------------------------------------------------------------------------------------------------------------
+
+        //------------------------------------------------------------------------------------------------------------------
+        //configuration mouvement des ennemis 
+        //------------------------------------------------------------------------------------------------------------------
+    }
+
+    CheckpointCollision(player, checkpoint) {
+        // Lorsque le joueur entre en collision avec le checkpoint
+        //console.log("Checkpoint atteint !");
+
+        // Changer l'état du checkpoint
+        if (checkpoint.status == false) {
+            checkpoint.anims.play('checkpointActive');
+            checkpoint.status = true
+        }
+        currentCheckpointEtat = checkpointEtat.active;
+        heroX = checkpoint.x
+        heroY = checkpoint.y
+        // Mettre à jour l'animation du checkpoint
+
+    }
+
+
+    collision(monstre, mur) {
+        console.log("ca touche", monstre.body.velocity.y)
+        // Inverser la vélocité du monstre
+        if (monstre.body.blocked.down) {
+
+            monstre.setVelocityY(-100);
+            monstre.anims.play('monstreAnimation')
+        }
+        else {
+
+            monstre.setVelocityY(100);
+            monstre.anims.play('monstreAnimation')
+        }
+    }
+    //régénération de 2 coeurs si le joueurs prend des degats
+
+    collectKit(player, kitsoin) {
+        console.log("delete")
+        if (player_health < 30) {
+            // Augmentation des points de vie
+            player_health += 10;
+            kitsoin.destroy();
+            if (player_health > 30) {
+                player_health = 30;
+
+
+                // Suppression du kit de soin
+
+
+
+            }
+        }
+    }
+    updateTimer() {
+        this.seconde += 1
+        if (this.seconde == 60) {
+            this.seconde = 0
+            this.minutes += 1
+        }
+        if (this.minutes) {
+            this.timerText.setText('Temps écoulé : ' + this.minutes + ":" + this.seconde    )
+        }
+        else { this.timerText.setText('Temps écoulé : ' + this.seconde) }
+
+    }
+
 }
 
-CheckpointCollision(player, checkpoint) {
-    // Lorsque le joueur entre en collision avec le checkpoint
-    console.log("Checkpoint atteint !");
-    // Changer l'état du checkpoint
-    currentCheckpointEtat = checkpointEtat.active;
-    heroX =checkpoint.x
-    heroY= checkpoint.y
-    // Mettre à jour l'animation du checkpoint
-    checkpoint.anims.play('checkpointActive');
-}  
- 
-
-collision(monstre, mur) {
-    console.log("ca touche", monstre.body.velocity.y)
-    // Inverser la vélocité du monstre
-    if (monstre.body.blocked.down) {
-        
-        monstre.setVelocityY(-100);
-        monstre.anims.play('monstreAnimation')
-    }
-    else {
-        
-        monstre.setVelocityY(100);
-        monstre.anims.play('monstreAnimation')
-    }
-}
-//régénération de 2 coeurs si le joueurs prend des degats
-
-collectKit(player, kitsoin) {
-    if (player_health < 60) {
-      // Augmentation des points de vie
-      player_health += 20;
-      if (player_health > 60) {
-        player_health  = 60;
-     
-  
-      // Suppression du kit de soin
-      kitsoin.destroy();
-  
-      
-      }
-    }
-  }
-  
-
-}
+var checkpoint_ref
