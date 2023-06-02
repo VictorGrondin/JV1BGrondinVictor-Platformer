@@ -109,6 +109,7 @@ class map extends Phaser.Scene {
         toucheF = this.input.keyboard.addKey("F");
 
         //la vie du perso qui s'affiche
+
         this.vie = this.physics.add.sprite(100, 100, 'barre_de_vie').setScrollFactor(0);
         this.vie.body.setAllowGravity(false);
 
@@ -285,7 +286,7 @@ class map extends Phaser.Scene {
         });
 
         //------------------------------------------------------------------------------------------------------------------
-        //configuration des touche G et F pour inverser la gravité et tirer des boules de feu 
+        //configuration des touche G et F pour inverser la gravité du monde  et tirer des boules de feu 
         //------------------------------------------------------------------------------------------------------------------
         cursors = this.input.keyboard.createCursorKeys();
         this.input.keyboard.on('keydown-G', function (event) {
@@ -331,7 +332,7 @@ class map extends Phaser.Scene {
 
 
         //------------------------------------------------------------------------------------------------------------------
-
+//collison avec les spikes + inflige des debgats
         //------------------------------------------------------------------------------------------------------------------
 
         this.physics.add.collider(player, spike, function () {
@@ -346,6 +347,7 @@ class map extends Phaser.Scene {
             }
         }, null, this);
 
+        //collison avec les murs du niveau
         this.physics.add.collider(this.monstre, murs_niveau, this.collision, null, this);
         //------------------------------------------------------------------------------------------------------------------
         this.physics.add.collider(player, this.monstre, function () {
@@ -359,6 +361,8 @@ class map extends Phaser.Scene {
                 }, 1000);
             }
         }, null, this);
+        //-------------------------------------------------------------------------------------------------------------------
+        //création d'un minuteur 
         this.timerText = this.add.text(0, 224, 'Temps écoulé : 0', {
             font: '24px Arial',
             fill: '#ffffff'
@@ -475,7 +479,7 @@ class map extends Phaser.Scene {
                 },
             })
             //--------------------------------------------------------------------------------------------------------------
-            //si le joueur arrive a 0 coeur le jeu gameover
+            //si le joueur arrive a 0 coeur il est tp au dernier checkpoint validé 
         }
         if (player_health == 0 || player_health <= 0) {
             player.x = heroX
