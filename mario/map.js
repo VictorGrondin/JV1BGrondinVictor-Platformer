@@ -106,7 +106,7 @@ class map extends Phaser.Scene {
 
         this.fireballgroup = this.physics.add.group()
 
-        toucheF = this.input.keyboard.addKey("F");
+        toucheE = this.input.keyboard.addKey("E");
 
         //la vie du perso qui s'affiche
 
@@ -286,10 +286,10 @@ class map extends Phaser.Scene {
         });
 
         //------------------------------------------------------------------------------------------------------------------
-        //configuration des touche G et F pour inverser la gravité du monde  et tirer des boules de feu 
+        //configuration des touche G et E pour inverser la gravité du monde  et tirer des boules de feu 
         //------------------------------------------------------------------------------------------------------------------
         cursors = this.input.keyboard.createCursorKeys();
-        this.input.keyboard.on('keydown-G', function (event) {
+        this.input.keyboard.on('keydown-R', function (event) {
             if (gravityDown) {
                 gravityDown = false;
                 player.setFlipX(true);
@@ -306,7 +306,7 @@ class map extends Phaser.Scene {
 
         }, this);
 
-        this.input.keyboard.on('keydown-F', function (event) {
+        this.input.keyboard.on('keydown-E', function (event) {
 
 
             if (cursors.right.isDown) {
@@ -450,7 +450,7 @@ class map extends Phaser.Scene {
 
 
         //------------------------------------------------------------------------------------------------------------------
-        if (toucheF.isDown && canshoot == true) {
+        if (toucheE.isDown && canshoot == true) {
 
 
             if (cursors.left.isDown) {
