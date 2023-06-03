@@ -6,6 +6,8 @@ invincible = false;
 var player_health = 30;
 var fireballgroup;
 var cursors;
+var scoreText;
+var score = 0;
 var player;
 var heroY = 33 * 32
 var heroX = 7 * 32
@@ -48,6 +50,8 @@ class map extends Phaser.Scene {
         this.load.spritesheet('monstre', 'assets/ennemy.png',
             { frameWidth: 64, frameHeight: 64 });
         this.load.image('kitsoin', 'assets/kitsoin.png',
+            { frameWidth: 32, frameHeight: 32 });
+            this.load.image('item', 'assets/item.png',
             { frameWidth: 32, frameHeight: 32 });
         this.load.image('tilesetPlatformer', 'assets/tilesetPlatformer.png');
         this.load.tilemapTiledJSON("carte", "assets/marioplat.json");
@@ -159,6 +163,13 @@ class map extends Phaser.Scene {
             this.save = this.kitsoin.create(calque_kitsoin.x, calque_kitsoin.y - 16, "kitsoin");
 
         }, null, this);
+
+
+        this.ruby = this.physics.add.group({ immovable: true, allowGravity: false });
+        this.calque_ruby = carteDuNiveau.getObjectLayer("ruby");
+        this.calque_ruby.objects.forEach(calque_ruby => {
+            this.inutile = this.ruby.create(calque_ruby.x ,calque_ruby.y - 16, "item");
+        });
 
 
         //------------------------------------------------------------------------------------------------------------------
@@ -360,7 +371,11 @@ class map extends Phaser.Scene {
                     invincible = false
                 }, 1000);
             }
+        
+
         }, null, this);
+
+
         //-------------------------------------------------------------------------------------------------------------------
         //création d'un minuteur 
         this.timerText = this.add.text(0, 224, 'Temps écoulé : 0', {
@@ -382,7 +397,20 @@ class map extends Phaser.Scene {
             callbackScope: this,
             loop: true
         });
+    
+
+    this.physics.add.overlap(player, this.ruby, collectruby, null, this); // récupération de l'item ruby 
+
+    function collectruby(player, ruby) {
+        ruby.disableBody(true, true);
+        score += 1; //augmente le score de 1
+        scoreText.setText('Score: ' + score); //met à jour l’affichage du score
+
     }
+    scoreText=this.add.text(330, 240,'score: 0',{ fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif', fontSize: 40 }).setScale(0.6).setScrollFactor(0)};
+
+
+    
     //------------------------------------------------------------------------------------------------------------------
 
     update() {
