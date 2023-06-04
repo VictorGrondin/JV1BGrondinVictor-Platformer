@@ -404,10 +404,10 @@ class map extends Phaser.Scene {
     function collectruby(player, ruby) {
         ruby.disableBody(true, true);
         score += 1; //augmente le score de 1
-        scoreText.setText('Score: ' + score); //met à jour l’affichage du score
+        scoreText.setText('Ruby collecté: ' + score); //met à jour l’affichage du score
 
     }
-    scoreText=this.add.text(330, 240,'score: 0',{ fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif', fontSize: 40 }).setScale(0.6).setScrollFactor(0)};
+    scoreText=this.add.text(0, 330,'Ruby collecté: 0', { fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif', fontSize: 40 }).setScale(0.6).setScrollFactor(0)};
 
 
     
