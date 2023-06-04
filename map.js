@@ -397,7 +397,7 @@ class map extends Phaser.Scene {
             callbackScope: this,
             loop: true
         });
-    
+    //------------------------------------------------------------------------------------------------------------------
 
     this.physics.add.overlap(player, this.ruby, collectruby, null, this); // récupération de l'item ruby 
 
