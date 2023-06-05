@@ -418,14 +418,14 @@ class map extends Phaser.Scene {
         if (player.body.blocked.down || player.body.blocked.up) {
 
             if (cursors.left.isDown) { //si la touche gauche est appuyée
-                player.setVelocityX(-800); //alors vitesse négative en X 
+                player.setVelocityX(-600); //alors vitesse négative en X 
                 if (player.anims.currentAnim.key != 'jump_ninja_left') {
                     player.anims.play('left', true); //et animation => gauche
 
                 }
             }
             else if (cursors.right.isDown) { //sinon si la touche droite est appuyée
-                player.setVelocityX(800); //alors vitesse positive en X
+                player.setVelocityX(600); //alors vitesse positive en X
                 if (player.anims.currentAnim.key != 'jump_ninja_right') {
                     player.anims.play('right', true); //et animation => droite
 
@@ -444,12 +444,12 @@ class map extends Phaser.Scene {
         }
         else {
             if (cursors.left.isDown) { //si la touche gauche est appuyée
-                player.setVelocityX(-800);
+                player.setVelocityX(-600);
                 player.anims.play('transition_left')
 
             }
             else if (cursors.right.isDown) { //sinon si la touche droite est appuyée
-                player.setVelocityX(800);
+                player.setVelocityX(600);
                 player.anims.play('transition_right')
             };
 
